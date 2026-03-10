@@ -9,11 +9,12 @@
 .map-view-container {
     flex: 1;
     position: relative;
-    background-color: #0f172a;
+    background-color: #020617;
+    /* Deeper slate */
     background-image:
-        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 60%),
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
     background-position: center center, -1px -1px, -1px -1px;
 }
@@ -41,14 +42,15 @@
 
 .map-pin-large {
     position: absolute;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid white;
 }
 
 .map-pin-large.start {
@@ -66,14 +68,14 @@
 
 .dashed-route-line {
     position: absolute;
-    top: 44px;
-    left: 44px;
-    width: calc(100% - 88px);
-    height: calc(100% - 88px);
-    border-top: 4px dashed var(--primary-color);
-    border-right: 4px dashed var(--secondary-color);
-    border-top-right-radius: 60px;
-    opacity: 0.6;
+    top: 42px;
+    left: 42px;
+    width: calc(100% - 84px);
+    height: calc(100% - 84px);
+    border-top: 3px dashed var(--primary-color);
+    border-right: 3px dashed var(--secondary-color);
+    border-top-right-radius: 40px;
+    opacity: 0.8;
 }
 
 .moving-car {
@@ -81,8 +83,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     background: white;
     border-radius: 50%;
     display: flex;
@@ -120,9 +122,9 @@
     padding: 1.5rem;
     z-index: 100;
     overflow-y: auto;
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(8px);
-    border-left: var(--glass-border);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .dashboard-header {
@@ -134,6 +136,7 @@
 .ride-controls {
     height: auto;
     min-height: 100%;
+    padding: 2rem;
 }
 
 /* Timeline inputs */

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ShieldCheck, Clock, Navigation, ArrowRight, Star } from 'lucide-react';
+import { MapPin, ShieldCheck, Clock, Navigation, ArrowRight, Star, Bolt } from 'lucide-react';
 import './Landing.css';
 
 const Landing = () => {
@@ -11,7 +11,7 @@ const Landing = () => {
                 <div className="hero-glow"></div>
                 <div className="container hero-container animate-fade-in">
                     <div className="hero-content">
-                        <div className="badge badge-primary mb-4">📍 Campus Exclusive</div>
+                        <div className="badge badge-primary mb-4 border border-blue-500/20">📍 Campus Exclusive</div>
                         <h1 className="hero-title">
                             Safe & Fast Rides <br />
                             Within Your <span className="text-gradient">Campus.</span>
@@ -32,9 +32,9 @@ const Landing = () => {
                         <div className="hero-stats mt-8">
                             <div className="stat-item">
                                 <div className="avatars">
-                                    <div className="avatar">👩‍🎓</div>
-                                    <div className="avatar">👨‍🎓</div>
-                                    <div className="avatar">👩‍💻</div>
+                                    <div className="avatar"><img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=b6e3f4" alt="Student" /></div>
+                                    <div className="avatar"><img src="https://api.dicebear.com/7.x/notionists/svg?seed=Aneka&backgroundColor=c0aede" alt="Student" /></div>
+                                    <div className="avatar"><img src="https://api.dicebear.com/7.x/notionists/svg?seed=John&backgroundColor=ffd5dc" alt="Student" /></div>
                                 </div>
                                 <div className="stat-text">
                                     <div className="stars">
@@ -60,15 +60,17 @@ const Landing = () => {
                             <div className="mockup-map">
                                 {/* Mock Map UI */}
                                 <div className="map-route"></div>
-                                <div className="map-pin start"><MapPin size={16} /></div>
-                                <div className="map-pin end"><Navigation size={16} /></div>
+                                <div className="map-pin start"><MapPin size={16} strokeWidth={2.5} /></div>
+                                <div className="map-pin end"><Navigation size={14} strokeWidth={2.5} /></div>
 
-                                <div className="glass-card mockup-driver-card">
+                                <div className="mockup-driver-card">
                                     <div className="flex items-center gap-4">
-                                        <div className="driver-avatar">SJ</div>
+                                        <div className="driver-avatar">
+                                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Sarah&backgroundColor=b6e3f4" alt="Driver" />
+                                        </div>
                                         <div>
-                                            <h4 style={{ marginBottom: 0, fontSize: '1rem' }}>Sarah Jenkins</h4>
-                                            <p style={{ marginBottom: 0, fontSize: '0.8rem' }}>Civic • 4 mins away</p>
+                                            <h4 style={{ marginBottom: 0, fontSize: '0.95rem' }}>Sarah Jenkins</h4>
+                                            <p style={{ marginBottom: 0, fontSize: '0.8rem', color: '#94a3b8' }}>Civic • 4 mins away</p>
                                         </div>
                                     </div>
                                     <div className="otp-badge">OTP: 4921</div>
@@ -82,34 +84,34 @@ const Landing = () => {
             {/* Features Section */}
             <section className="features-section">
                 <div className="container">
-                    <div className="section-header text-center mb-8">
+                    <div className="section-header text-center mb-12">
                         <h2 className="section-title">Why Choose RideShare?</h2>
-                        <p>Designed specifically for university students with safety as the #1 priority.</p>
+                        <p className="text-muted">Designed specifically for university students with safety as the #1 priority.</p>
                     </div>
 
                     <div className="grid grid-cols-3 gap-6 features-grid">
-                        <div className="glass-card feature-card">
+                        <div className="glass-panel feature-card">
                             <div className="feature-icon icon-blue">
                                 <ShieldCheck size={28} />
                             </div>
                             <h3>Verified Students Only</h3>
-                            <p>Every user is verified via their college email address (.edu). No outsiders on the platform.</p>
+                            <p className="text-muted">Every user is verified via their college email address (.edu). No outsiders on the platform, ensuring maximum safety.</p>
                         </div>
 
-                        <div className="glass-card feature-card">
-                            <div className="feature-icon icon-pink">
-                                <Clock size={28} />
+                        <div className="glass-panel feature-card">
+                            <div className="feature-icon icon-purple">
+                                <Bolt size={28} />
                             </div>
                             <h3>OTP Verification</h3>
-                            <p>Drivers must enter your unique OTP before the ride begins, ensuring you get in the right car.</p>
+                            <p className="text-muted">Drivers must enter your unique OTP before the ride begins, ensuring you never get into the wrong car.</p>
                         </div>
 
-                        <div className="glass-card feature-card">
-                            <div className="feature-icon icon-green">
+                        <div className="glass-panel feature-card">
+                            <div className="feature-icon icon-emerald">
                                 <MapPin size={28} />
                             </div>
                             <h3>Live Tracking</h3>
-                            <p>Real-time GPS tracking of your driver's location from the moment you book until drop-off.</p>
+                            <p className="text-muted">Real-time GPS tracking of your driver's location on the campus map from the moment you book until your drop-off.</p>
                         </div>
                     </div>
                 </div>
@@ -119,7 +121,7 @@ const Landing = () => {
 };
 
 const MenuIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
         <line x1="3" y1="18" x2="21" y2="18"></line>

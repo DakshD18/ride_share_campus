@@ -1,91 +1,55 @@
-import React, { useState } from 'react';
-import {
-    MapPin,
-    Navigation,
-    Car,
-    Clock,
-    CheckCircle,
-    CreditCard,
-    PhoneCall,
-    Star
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Navigation, Map, Search, Car, User, ShieldCheck, CheckCircle2, Clock, Star, Phone, MessageSquare, ChevronRight } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const userRole = localStorage.getItem('user_role') || 'passenger';
-
-    // App States: 'idle' -> 'searching' -> 'matched' -> 'riding' -> 'completed'
-    const [rideState, setRideState] = useState('idle');
-
+    const [rideState, setRideState] = useState('idle'); // idle, searching, matched, riding, completed
     const [pickup, setPickup] = useState('');
     const [destination, setDestination] = useState('');
+    const [showOptions, setShowOptions] = useState(false);
 
-    const [showOtp, setShowOtp] = useState(false);
-
+    // Mock ride flow simulation
     const handleRequestRide = (e) => {
         e.preventDefault();
         if (!pickup || !destination) return;
 
         setRideState('searching');
 
-        // Simulate finding a matched driver in 3 seconds
+        // Simulate finding a match
         setTimeout(() => {
             setRideState('matched');
+
+            // Simulate driver arriving and starting ride
+            setTimeout(() => {
+                setRideState('riding');
+
+                // Simulate ride completion
+                setTimeout(() => {
+                    setRideState('completed');
+                }, 8000);
+
+            }, 5000);
+
         }, 3000);
     };
 
-    const handleDriverArrived = () => {
-        setShowOtp(true);
-    };
-
-    const handleStartTrip = () => {
-        setShowOtp(false);
-        setRideState('riding');
-
-        // Simulate journey complete in 5 seconds
-        setTimeout(() => {
-            setRideState('completed');
-        }, 5000);
-    };
-
-    const handlePay = () => {
+    const resetDashboard = () => {
         setRideState('idle');
         setPickup('');
         setDestination('');
+        setShowOptions(false);
     };
 
     return (
         <div className="dashboard-layout">
-            {/* Side map area (mocked context for premium feel) */}
-            <div className="map-view-container">
-                <div className="mock-map-bg pulse-map">
-                    <div className="map-overlay-blur"></div>
-                    {/* Mock paths and pins appear based on state */}
-                    {(rideState !== 'idle') && (
-                        <div className="map-dynamic-route animate-fade-in">
-                            <div className="map-pin-large start"><MapPin size={24} /></div>
-                            <div className="dashed-route-line"></div>
-                            <div className="map-pin-large end"><Navigation size={24} /></div>
-                        </div>
-                    )}
-                    {rideState === 'matched' && (
-                        <div className="moving-car">
-                            <Car size={32} color="#ec4899" />
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Control panel Area */}
+            {/* Sidebar / Control Panel */}
             <div className="control-panel-container">
-                <div className="glass-panel ride-controls">
+                <div className="dashboard-header mb-6">
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'white' }}>Where to?</h2>
+                    <div className="badge badge-primary">Rider Mode</div>
+                </div>
 
-                    <div className="dashboard-header mb-6">
-                        <h2 className="mb-0">Campus Ride</h2>
-                        <div className="badge badge-success">Online</div>
-                    </div>
-
-                    {/* ----- IDLE STATE ----- */}
+                <div className="ride-controls glass-card" style={{ padding: '1.5rem' }}>
                     {rideState === 'idle' && (
                         <form onSubmit={handleRequestRide} className="animate-fade-in">
                             <div className="location-inputs">
@@ -95,177 +59,251 @@ const Dashboard = () => {
                                     <div className="timeline-dot end"></div>
                                 </div>
 
-                                <div className="form-group mb-4 pl-8 relative">
-                                    <label className="form-label text-sm">Pickup Location</label>
-                                    <input
-                                        type="text"
-                                        className="form-input"
-                                        placeholder="E.g. Engineering Block 3"
-                                        value={pickup}
-                                        onChange={(e) => setPickup(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group mb-6 pl-8 relative">
-                                    <label className="form-label text-sm">Destination</label>
-                                    <input
-                                        type="text"
-                                        className="form-input"
-                                        placeholder="E.g. North Gate Hostel"
-                                        value={destination}
-                                        onChange={(e) => setDestination(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="fare-estimate glass-card mb-6">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2">
-                                        <Car className="text-primary" size={24} />
-                                        <span className="font-semibold text-lg">Standard</span>
+                                <div className="form-group" style={{ marginLeft: '2rem' }}>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            placeholder="Current location (e.g., North Dorm)"
+                                            value={pickup}
+                                            onChange={(e) => setPickup(e.target.value)}
+                                            required
+                                        />
                                     </div>
-                                    <div className="font-bold text-xl">₹ 25</div>
                                 </div>
-                                <div className="flex justify-between items-center mt-2 text-sm text-secondary">
-                                    <span>~4 mins away</span>
-                                    <span>1.2 km</span>
+
+                                <div className="form-group mb-0" style={{ marginLeft: '2rem' }}>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            placeholder="Destination (e.g., Science Building)"
+                                            value={destination}
+                                            onChange={(e) => {
+                                                setDestination(e.target.value);
+                                                if (e.target.value.length > 2) setShowOptions(true);
+                                                else setShowOptions(false);
+                                            }}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            <button type="submit" className="btn btn-primary btn-lg w-full justify-center">
-                                Request Campus Ride
+                            {showOptions && pickup && destination && (
+                                <div className="ride-options animate-fade-in mb-6">
+                                    <h4 className="text-muted text-sm mb-3">AVAILABLE RIDES</h4>
+
+                                    <div className="glass-card mb-3" style={{ padding: '1rem', border: '1px solid var(--primary-color)', background: 'rgba(59, 130, 246, 0.1)' }}>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-3">
+                                                <Car size={24} className="text-blue-400" />
+                                                <div>
+                                                    <h4 style={{ marginBottom: 0, color: 'white' }}>Campus Share</h4>
+                                                    <div className="flex items-center gap-2 text-sm text-muted">
+                                                        <Clock size={12} /> <span>3 mins away</span>
+                                                        <span>•</span>
+                                                        <User size={12} /> <span>2 seats left</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <h3 style={{ marginBottom: 0, color: 'white' }}>$2.50</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                className="btn btn-primary w-full justify-center btn-lg mt-4"
+                                disabled={!pickup || !destination}
+                                style={{ opacity: (!pickup || !destination) ? 0.5 : 1 }}
+                            >
+                                Request Ride
                             </button>
                         </form>
                     )}
 
-                    {/* ----- SEARCHING STATE ----- */}
                     {rideState === 'searching' && (
-                        <div className="searching-state text-center animate-fade-in">
+                        <div className="searching-container text-center animate-fade-in py-8">
                             <div className="radar-spinner mb-6">
+                                <Search size={32} className="radar-icon" />
                                 <div className="radar-circle circle-1"></div>
                                 <div className="radar-circle circle-2"></div>
                                 <div className="radar-circle circle-3"></div>
-                                <Car className="radar-icon" size={32} />
                             </div>
-                            <h3>Looking for drivers...</h3>
-                            <p>Notifying campus drivers near {pickup}</p>
+                            <h3 style={{ color: 'white', fontSize: '1.4rem' }}>Finding your driver...</h3>
+                            <p className="text-muted">Matching you with verified students nearby.</p>
+
                             <button
-                                className="btn btn-secondary mt-4 w-full justify-center"
-                                onClick={() => setRideState('idle')}
+                                className="btn btn-secondary w-full mt-6"
+                                onClick={resetDashboard}
                             >
                                 Cancel Request
                             </button>
                         </div>
                     )}
 
-                    {/* ----- MATCHED STATE ----- */}
                     {rideState === 'matched' && (
-                        <div className="matched-state animate-fade-in">
-                            <div className="match-banner bg-success-light text-success mb-6 p-3 rounded-md text-center font-bold">
-                                Driver Accepted Your Request!
+                        <div className="matched-container animate-fade-in">
+                            <div className="match-banner badge-success mb-4 text-center w-full py-2 rounded-md font-semibold">
+                                Driver Matched! Arriving in 3 mins
                             </div>
 
-                            <div className="driver-profile glass-card mb-6">
-                                <div className="flex justify-between items-center mb-4">
-                                    <div className="flex gap-4 items-center">
-                                        <div className="driver-avatar-med">SJ</div>
-                                        <div>
-                                            <h4 className="mb-0">Sarah Jenkins</h4>
-                                            <div className="flex items-center gap-1 text-sm text-warning">
-                                                <Star size={14} fill="currentColor" /> 4.9 (120 rides)
-                                            </div>
+                            <div className="driver-profile glass-card mb-4" style={{ border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="driver-avatar-med">
+                                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Michael&backgroundColor=c0aede" alt="Driver" style={{ width: '100%', borderRadius: '12px' }} />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <h3 style={{ marginBottom: '0.2rem', color: 'white' }}>Michael Chang</h3>
+                                        <div className="flex items-center gap-1 text-sm text-muted">
+                                            <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                                            <span>4.9 (124 campus rides)</span>
                                         </div>
                                     </div>
-                                    <button className="btn-icon bg-primary" onClick={handleDriverArrived}>
-                                        <PhoneCall size={20} color="white" />
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <button className="btn-icon bg-slate-800"><MessageSquare size={18} /></button>
+                                        <button className="btn-icon bg-slate-800"><Phone size={18} /></button>
+                                    </div>
                                 </div>
-                                <div className="vehicle-info bg-surface p-3 rounded-md flex justify-between items-center">
+
+                                <div className="vehicle-info flex justify-between items-center bg-slate-900/50 p-3 rounded-lg">
                                     <div>
-                                        <span className="text-secondary text-sm block">Vehicle</span>
-                                        <span className="font-bold block">White Honda Civic</span>
+                                        <h4 style={{ marginBottom: '0.2rem', fontSize: '0.9rem', color: 'white' }}>Honda Civic (Blue)</h4>
+                                        <span className="badge badge-primary">ABC 1234</span>
                                     </div>
-                                    <div className="badge badge-primary text-xl px-4 py-2">
-                                        DL 4C 9812
-                                    </div>
+                                    <Car size={32} className="text-blue-400" opacity={0.5} />
                                 </div>
                             </div>
 
-                            {!showOtp ? (
-                                <div className="arrival-status text-center">
-                                    <p className="text-lg font-semibold mb-2">Arriving in <span className="text-primary text-2xl">3 min</span></p>
-                                    <button className="btn btn-primary w-full justify-center btn-lg" onClick={handleDriverArrived}>
-                                        Simulate Driver Arrival
-                                    </button>
+                            <div className="otp-container glass-card mb-6 text-center pulse-warning-bg">
+                                <p className="text-sm font-semibold mb-2" style={{ color: 'white' }}>Share this OTP to start the ride</p>
+                                <div className="text-4xl font-bold tracking-widest text-white">
+                                    8 4 2 9
                                 </div>
-                            ) : (
-                                <div className="otp-section text-center p-6 border border-warning rounded-lg bg-warning-light relative overflow-hidden">
-                                    <div className="pulse-warning-bg absolute inset-0 opacity-20"></div>
-                                    <h4 className="text-warning mb-2 relative z-10">Show this OTP to Driver</h4>
-                                    <div className="otp-display text-5xl font-extrabold tracking-widest text-warning mb-4 relative z-10">
-                                        4921
-                                    </div>
-                                    <p className="text-sm mb-4 relative z-10 text-gray-300">Do not share until driver arrives.</p>
-                                    <button className="btn btn-warning w-full justify-center relative z-10" onClick={handleStartTrip}>
-                                        Driver Verified OTP
-                                    </button>
+                            </div>
+
+                            <div className="route-summary mb-4 px-2">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                    <p className="mb-0 text-sm text-slate-300 truncate">{pickup}</p>
                                 </div>
-                            )}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                    <p className="mb-0 text-sm text-slate-300 truncate">{destination}</p>
+                                </div>
+                            </div>
+
+                            <button className="btn btn-secondary w-full text-danger mt-2" onClick={resetDashboard}>
+                                Cancel Ride
+                            </button>
                         </div>
                     )}
 
-                    {/* ----- RIDING STATE ----- */}
                     {rideState === 'riding' && (
-                        <div className="riding-state animate-fade-in text-center py-6">
-                            <div className="pulse-success-bg inline-block p-6 rounded-full mb-6 relative">
-                                <Navigation size={48} className="text-success animate-pulse relative z-10" />
+                        <div className="riding-container animate-fade-in">
+                            <div className="pulse-success-bg p-4 rounded-xl text-center mb-6 border border-emerald-500/20">
+                                <div className="flex justify-center mb-2">
+                                    <ShieldCheck size={32} className="text-emerald-400" />
+                                </div>
+                                <h3 className="text-emerald-400 mb-1">OTP Verified</h3>
+                                <p className="mb-0 text-sm text-emerald-100/70">You are on your way to {destination}</p>
                             </div>
-                            <h2>En Route to Destination</h2>
-                            <div className="glass-card mt-6 text-left">
-                                <p className="text-secondary mb-1">Heading to</p>
-                                <h3 className="mb-0 text-xl">{destination}</h3>
-                                <div className="flex items-center gap-2 mt-4 text-sm font-semibold text-primary">
-                                    <Clock size={16} /> ETA: ~5 mins
+
+                            <div className="flex justify-between items-center mb-6 px-2">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-white mb-1">4 mins</h2>
+                                    <p className="text-muted mb-0">Est. drop-off at 10:42 AM</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-sm text-muted">Distance</span>
+                                    <h4 className="text-white mb-0">1.2 miles</h4>
+                                </div>
+                            </div>
+
+                            <div className="driver-profile glass-card mb-4 bg-slate-900/50 hidden lg:block">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold bg-gradient-to-br from-blue-400 to-indigo-600">
+                                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Michael&backgroundColor=c0aede" alt="Driver" style={{ width: '100%', borderRadius: '50%' }} />
+                                    </div>
+                                    <div>
+                                        <h4 style={{ marginBottom: '0.1rem', fontSize: '0.95rem', color: 'white' }}>Michael is driving</h4>
+                                        <p style={{ marginBottom: 0, fontSize: '0.8rem' }} className="text-muted">Safe campus ride in progress.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* ----- COMPLETED STATE ----- */}
                     {rideState === 'completed' && (
-                        <div className="completed-state animate-fade-in text-center py-2">
-                            <div className="success-checkmark inline-flex items-center justify-center w-24 h-24 rounded-full bg-success text-white mb-6 animate-bounce-in">
-                                <CheckCircle size={48} />
-                            </div>
-                            <h2>You've Arrived!</h2>
-                            <p className="text-secondary mb-8">Hope you had a safe ride.</p>
-
-                            <div className="payment-card glass-card mb-8">
-                                <h3 className="text-2xl mb-2">₹ 25</h3>
-                                <p className="text-sm text-secondary">Campus Standard Rate</p>
-
-                                <div className="flex justify-center gap-2 mt-6">
-                                    <Star size={32} className="text-warning cursor-pointer hover:scale-110 transition" fill="currentColor" />
-                                    <Star size={32} className="text-warning cursor-pointer hover:scale-110 transition" fill="currentColor" />
-                                    <Star size={32} className="text-warning cursor-pointer hover:scale-110 transition" fill="currentColor" />
-                                    <Star size={32} className="text-warning cursor-pointer hover:scale-110 transition" fill="currentColor" />
-                                    <Star size={32} className="text-secondary cursor-pointer hover:scale-110 transition" />
+                        <div className="completed-container text-center animate-fade-in py-6">
+                            <div className="flex justify-center mb-4">
+                                <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center animate-bounce-in border border-emerald-500/20">
+                                    <CheckCircle2 size={40} className="text-emerald-400" />
                                 </div>
                             </div>
+                            <h2 className="text-white mb-2">You have arrived!</h2>
+                            <p className="text-muted mb-6">Thanks for keeping the campus safe and green.</p>
 
-                            <button
-                                className="btn btn-primary btn-lg w-full justify-center gap-2"
-                                onClick={handlePay}
-                            >
-                                <CreditCard size={20} />
-                                Pay via UPI
+                            <div className="glass-card mb-6 bg-slate-900/50">
+                                <h3 className="text-white mb-4">Total Fare: <span className="text-emerald-400">$2.50</span></h3>
+
+                                <button className="btn w-full mb-3" style={{ background: '#6366f1', color: 'white', fontWeight: 600 }}>
+                                    Pay via UPI
+                                </button>
+                                <button className="btn btn-secondary w-full">
+                                    Pay Cash
+                                </button>
+                            </div>
+
+                            <button className="btn btn-primary w-full" onClick={resetDashboard}>
+                                Done
                             </button>
                         </div>
                     )}
 
                 </div>
+            </div>
+
+            {/* Map View Area (Mocked for now) */}
+            <div className="map-view-container">
+                {rideState === 'idle' && (
+                    <div className="flex items-center justify-center h-full text-slate-500 opacity-50 flex-col gap-4">
+                        <Map size={64} strokeWidth={1} />
+                        <p className="font-medium tracking-wide">Enter destination to see route on map</p>
+                    </div>
+                )}
+
+                {rideState === 'searching' && (
+                    <div className="map-overlay-blur">
+                        <div className="flex items-center justify-center h-full text-blue-400 opacity-60">
+                            <Map size={64} strokeWidth={1} />
+                        </div>
+                    </div>
+                )}
+
+                {(rideState === 'matched' || rideState === 'riding') && (
+                    <div className="map-dynamic-route animate-fade-in">
+                        <div className="map-pin-large start z-10">
+                            <div className="w-3 h-3 bg-white rounded-full"></div>
+                        </div>
+
+                        <div className="dashed-route-line"></div>
+
+                        <div className="map-pin-large end z-10">
+                            <Navigation size={20} className="text-white" />
+                        </div>
+
+                        {rideState === 'riding' && (
+                            <div className="moving-car">
+                                <Car size={24} className="text-primary-color" />
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

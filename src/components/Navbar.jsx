@@ -21,9 +21,9 @@ const Navbar = () => {
             <div className="container nav-container">
                 <Link to="/" className="brand">
                     <div className="brand-icon">
-                        <Car size={24} />
+                        <Car size={22} />
                     </div>
-                    <span className="brand-text">RideShare<span className="text-gradient">Campus</span></span>
+                    <span className="brand-text">RideShare<span className="text-gradient" style={{ marginLeft: '2px' }}>Campus</span></span>
                 </Link>
 
                 {/* Desktop Menu */}
@@ -31,11 +31,11 @@ const Navbar = () => {
                     <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
                     <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>Dashboard</Link>
                     <div className="nav-actions">
-                        <Link to="/login" className="btn btn-secondary">
+                        <Link to="/login" className="btn btn-secondary" style={{ padding: '0.6rem 1.25rem' }}>
                             <LogIn size={18} />
                             <span>Login</span>
                         </Link>
-                        <Link to="/login" className="btn btn-primary">
+                        <Link to="/login" className="btn btn-primary" style={{ padding: '0.6rem 1.25rem' }}>
                             <User size={18} />
                             <span>Sign Up</span>
                         </Link>

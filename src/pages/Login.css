@@ -18,26 +18,24 @@
 }
 
 .auth-header h2 {
-    font-size: 2rem;
+    font-size: 2.25rem;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
-}
-
-.auth-header p {
-    color: var(--text-secondary);
+    letter-spacing: -0.02em;
 }
 
 .auth-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
-    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: #60a5fa;
     margin: 0 auto 1.5rem;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.1);
 }
 
 /* Background Animated Blobs */
@@ -45,26 +43,26 @@
     position: absolute;
     filter: blur(80px);
     z-index: 1;
-    opacity: 0.6;
+    opacity: 0.5;
     border-radius: 50%;
-    animation: float 10s infinite ease-in-out alternate;
+    animation: float 12s infinite ease-in-out alternate;
 }
 
 .blob-1 {
-    width: 400px;
-    height: 400px;
-    background: rgba(99, 102, 241, 0.4);
-    top: 10%;
+    width: 450px;
+    height: 450px;
+    background: rgba(59, 130, 246, 0.3);
+    top: 5%;
     right: 15%;
 }
 
 .blob-2 {
-    width: 350px;
-    height: 350px;
-    background: rgba(236, 72, 153, 0.4);
+    width: 400px;
+    height: 400px;
+    background: rgba(16, 185, 129, 0.2);
     bottom: 0%;
     left: 10%;
-    animation-delay: -5s;
+    animation-delay: -6s;
 }
 
 @keyframes float {
@@ -73,11 +71,11 @@
     }
 
     50% {
-        transform: translate(30px, -50px) scale(1.1);
+        transform: translate(40px, -60px) scale(1.1);
     }
 
     100% {
-        transform: translate(-20px, 40px) scale(0.9);
+        transform: translate(-30px, 50px) scale(0.9);
     }
 }
 
@@ -93,6 +91,7 @@
     color: var(--text-muted);
     pointer-events: none;
     z-index: 5;
+    transition: color 0.3s ease;
 }
 
 .form-input.with-icon {
@@ -112,12 +111,12 @@
     cursor: pointer;
     padding: 0;
     margin: 0;
-    text-decoration: underline;
     transition: var(--transition);
 }
 
 .toggle-auth-btn:hover {
-    color: var(--secondary-color);
+    color: var(--primary-hover);
+    text-decoration: underline;
 }
 
 .auth-alert {
@@ -132,7 +131,7 @@
 }
 
 .auth-alert.error {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     color: #fca5a5;
 }

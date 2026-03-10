@@ -44,7 +44,7 @@ const Login = () => {
                         <GraduationCap size={32} />
                     </div>
                     <h2>{isLogin ? 'Welcome Back' : 'Join RideShare'}</h2>
-                    <p>Login with your student email to continue</p>
+                    <p className="text-muted">{isLogin ? 'Login' : 'Sign up'} with your student email to continue</p>
                 </div>
 
                 {error && (
@@ -85,7 +85,7 @@ const Login = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full justify-center mt-4 btn-lg">
+                    <button type="submit" className="btn btn-primary w-full justify-center mt-6 btn-lg">
                         {isLogin ? (
                             <>
                                 <LogIn size={20} /> Login
@@ -97,7 +97,7 @@ const Login = () => {
                 </form>
 
                 <div className="auth-footer mt-8 text-center">
-                    <p className="mb-0">
+                    <p className="mb-0 text-muted">
                         {isLogin ? "Don't have an account? " : "Already have an account? "}
                         <button
                             type="button"
