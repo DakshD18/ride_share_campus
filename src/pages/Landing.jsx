@@ -223,7 +223,7 @@ const Landing = () => {
                   textDecoration: 'none', transition: 'all 0.25s', boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
                   letterSpacing: '0.02em',
                 }}>
-                  Get Started Free <ArrowRight size={17} />
+                  Get Started Here <ArrowRight size={17} />
                 </Link>
                 <a href="#how-it-works" className="btn-ghost" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
@@ -410,7 +410,7 @@ const Landing = () => {
                 color: 'white', borderRadius: '0.75rem', fontWeight: 700, fontSize: '1rem',
                 textDecoration: 'none', boxShadow: '0 4px 20px rgba(59,130,246,0.4)', transition: 'all 0.25s',
               }}>
-                Get Started Free <ArrowRight size={18} />
+                Get Started <ArrowRight size={18} />
               </Link>
               <p style={{ fontSize: '0.8rem', color: '#334155', marginTop: '1.25rem' }}>
                 College email required · No credit card · Instant access

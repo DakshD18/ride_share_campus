@@ -142,7 +142,7 @@ const Login = () => {
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Email</label>
             <div style={{ position: 'relative' }}>
               <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: '#475569', display: 'flex', pointerEvents: 'none' }}><Mail size={15} /></span>
-              <input className="login-input" name="email" type="email" placeholder="you@email."
+              <input className="login-input" name="email" type="email" placeholder="your@email."
                 value={form.email} onChange={handleChange} required
                 style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.6rem', background: 'rgba(2,6,23,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.65rem', color: '#f8fafc', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit' }} />
             </div>
