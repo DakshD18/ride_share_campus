@@ -105,7 +105,7 @@ const MockRideCard = () => (
   }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active Ride</span>
-      <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.6rem', background: 'rgba(16,185,129,0.15)', color: '#10b981', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.3)', fontWeight: 600 }}>En Route</span>
+      <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.6rem', background: 'rgba(16,185,129,0.15)', color: '#10b981', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.3)', fontWeight: 600 }}> On Route </span>
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
       <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
