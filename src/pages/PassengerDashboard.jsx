@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { generateOTP } from '../services/djangoApi';
+import RideMap, { PlaceAutocomplete } from '../components/RideMap';
 import {
   Car, User, MapPin, Phone, QrCode, Star, Clock,
   Home, Navigation, History, LogOut, Menu, X,
@@ -221,60 +223,9 @@ const Stars = ({ rating }) => (
   </div>
 );
 
-/* Map placeholder */
-const MapPlaceholder = ({ height = '280px', showCar = false }) => (
-  <div style={{
-    width: '100%', height, borderRadius: '1rem', overflow: 'hidden', position: 'relative',
-    background: '#0a1628',
-    border: '1px solid rgba(255,255,255,0.06)',
-  }}>
-    {/* Grid lines mimicking a map */}
-    <div style={{
-      position: 'absolute', inset: 0,
-      backgroundImage: `
-        linear-gradient(rgba(59,130,246,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59,130,246,0.08) 1px, transparent 1px)
-      `,
-      backgroundSize: '40px 40px',
-    }} />
-    {/* Roads */}
-    <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', background: 'rgba(59,130,246,0.15)', transform: 'translateY(-50%)' }} />
-    <div style={{ position: 'absolute', left: '30%', top: 0, bottom: 0, width: '2px', background: 'rgba(59,130,246,0.1)' }} />
-    <div style={{ position: 'absolute', left: '65%', top: 0, bottom: 0, width: '2px', background: 'rgba(59,130,246,0.1)' }} />
-    <div style={{ position: 'absolute', top: '30%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.04)' }} />
-    <div style={{ position: 'absolute', top: '70%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.04)' }} />
-    {/* Route line */}
-    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      <path d="M 60,200 Q 140,160 200,150 Q 260,140 300,100 Q 340,60 380,80" stroke="#3b82f6" strokeWidth="2.5" fill="none" strokeDasharray="6,4" opacity="0.7" />
-    </svg>
-    {/* Pickup marker */}
-    <div style={{ position: 'absolute', bottom: '28%', left: '12%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981', border: '2px solid white', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
-      <div style={{ fontSize: '0.6rem', color: '#10b981', fontWeight: 700, marginTop: '2px', background: 'rgba(0,0,0,0.6)', padding: '1px 4px', borderRadius: '4px' }}>YOU</div>
-    </div>
-    {/* Drop marker */}
-    <div style={{ position: 'absolute', top: '18%', right: '18%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444', border: '2px solid white', boxShadow: '0 0 8px rgba(239,68,68,0.6)' }} />
-      <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 700, marginTop: '2px', background: 'rgba(0,0,0,0.6)', padding: '1px 4px', borderRadius: '4px' }}>DROP</div>
-    </div>
-    {/* Moving car icon */}
-    {showCar && (
-      <div style={{ position: 'absolute', top: '42%', left: '44%', animation: 'carMove 4s ease-in-out infinite' }}>
-        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 12px rgba(59,130,246,0.6)' }}>
-          <Car size={14} color="white" />
-        </div>
-      </div>
-    )}
-    {/* Map label */}
-    <div style={{ position: 'absolute', top: '0.75rem', left: '0.75rem', fontSize: '0.7rem', color: '#334155', fontWeight: 600, background: 'rgba(0,0,0,0.5)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-      CAMPUS MAP
-    </div>
-    {/* Google Maps note */}
-    <div style={{ position: 'absolute', bottom: '0.75rem', right: '0.75rem', fontSize: '0.65rem', color: '#1e3a5f', fontWeight: 600 }}>
-      Google Maps will load here
-    </div>
-  </div>
-);
+
+/* ── MapPlaceholder replaced by real Google Map (RideMap component) ──── */
+
 
 /* OTP Display */
 const OTPDisplay = ({ otp = '4721' }) => (
@@ -414,22 +365,51 @@ const PassengerDashboard = () => {
   const [activeTab, setActiveTab] = useState('book');
   const [pickup, setPickup] = useState('');
   const [drop, setDrop] = useState('');
+  const [pickupCoords, setPickupCoords] = useState(null);  // { lat, lng } from Places
+  const [dropCoords, setDropCoords]     = useState(null);  // { lat, lng } from Places
   const [driversVisible, setDriversVisible] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [rideActive, setRideActive] = useState(false);
   const [rideStep, setRideStep] = useState(1);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [otp, setOtp] = useState('----');             // filled by Django
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [rideId, setRideId] = useState(null);          // Firestore ride ID (mocked for now)
 
-  // Mock user
-  const user = { name: 'Arjun Singh', email: 'arjun@college.edu', totalRides: 12, memberSince: 'Jan 2025' };
-  const otp = '4721';
+  // Pull real user info set during Firebase login
+  const user = {
+    name:        localStorage.getItem('userName')  || 'Passenger',
+    email:       localStorage.getItem('userEmail') || '',
+    uid:         localStorage.getItem('userUID')   || '',
+    totalRides:  12,
+    memberSince: 'Jan 2025',
+  };
 
   const handleFindRides = () => {
     if (pickup && drop) setDriversVisible(true);
   };
 
-  const handleBookRide = () => {
+  const handleBookRide = async () => {
     if (!selectedDriver) return;
+
+    // Generate a temporary ride ID (in production this comes from Firestore)
+    const mockRideId = `ride_${Date.now()}_${user.uid || 'anon'}`;
+    setRideId(mockRideId);
+    setOtpLoading(true);
+    setOtpError('');
+
+    const result = await generateOTP(mockRideId, user.uid, selectedDriver.id?.toString() || '');
+
+    if (result.success) {
+      setOtp(result.data.otp);
+    } else {
+      // Fallback: show a local OTP so UI still works even if Django is down
+      setOtp(String(Math.floor(1000 + Math.random() * 9000)));
+      setOtpError('Could not reach backend — showing local OTP.');
+    }
+    setOtpLoading(false);
+
     setRideActive(true);
     setActiveTab('active');
     // Simulate ride progressing
@@ -550,8 +530,15 @@ const PassengerDashboard = () => {
         <div style={{ marginBottom: '0.75rem' }}>
           <label style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '0.4rem' }}>Pickup Location</label>
           <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#10b981' }}><MapPin size={15} /></div>
-            <input className="pd-input" placeholder="e.g. Main Gate, Hostel A..." value={pickup} onChange={e => setPickup(e.target.value)} />
+            <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#10b981', zIndex: 1 }}><MapPin size={15} /></div>
+            <PlaceAutocomplete
+              placeholder="e.g. Main Gate, Hostel A..."
+              value={pickup}
+              onChange={(val) => { setPickup(val); if (!val) setPickupCoords(null); }}
+              onPlaceSelect={(place) => { setPickup(place.address); setPickupCoords({ lat: place.lat, lng: place.lng }); }}
+              className="pd-input"
+              style={{ paddingLeft: '2.4rem' }}
+            />
           </div>
         </div>
         {/* Divider with swap */}
@@ -564,15 +551,28 @@ const PassengerDashboard = () => {
         <div>
           <label style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '0.4rem' }}>Drop Location</label>
           <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#ef4444' }}><MapPin size={15} /></div>
-            <input className="pd-input" placeholder="e.g. Library, Lab Complex..." value={drop} onChange={e => setDrop(e.target.value)} />
+            <div style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#ef4444', zIndex: 1 }}><MapPin size={15} /></div>
+            <PlaceAutocomplete
+              placeholder="e.g. Library, Lab Complex..."
+              value={drop}
+              onChange={(val) => { setDrop(val); if (!val) setDropCoords(null); }}
+              onPlaceSelect={(place) => { setDrop(place.address); setDropCoords({ lat: place.lat, lng: place.lng }); }}
+              className="pd-input"
+              style={{ paddingLeft: '2.4rem' }}
+            />
           </div>
         </div>
       </div>
 
-      {/* Map */}
+      {/* Map — real Google Map */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <MapPlaceholder height="220px" />
+        <RideMap
+          height="240px"
+          pickupCoords={pickupCoords}
+          dropCoords={dropCoords}
+          showCar={false}
+          accentColor="blue"
+        />
       </div>
 
       {/* Find button */}
@@ -658,7 +658,13 @@ const PassengerDashboard = () => {
         </div>
 
         {/* Map */}
-        <MapPlaceholder height="240px" showCar={true} />
+        <RideMap
+          height="240px"
+          pickupCoords={pickupCoords}
+          dropCoords={dropCoords}
+          showCar={true}
+          accentColor="blue"
+        />
 
         {/* Ride status */}
         <RideStatus step={rideStep} />
@@ -666,8 +672,26 @@ const PassengerDashboard = () => {
         {/* Driver card */}
         <ActiveDriverCard driver={selectedDriver} onCall={handleCall} onQR={handleQR} />
 
-        {/* OTP */}
-        <OTPDisplay otp={otp} />
+        {/* OTP — from Django backend */}
+        {otpLoading ? (
+          <div style={{
+            background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)',
+            borderRadius: '1rem', padding: '1.5rem', textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '0.85rem', color: '#60a5fa' }}>⏳ Generating OTP from server...</div>
+          </div>
+        ) : (
+          <>
+            {otpError && (
+              <div style={{
+                fontSize: '0.75rem', color: '#f87171', background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.2)', borderRadius: '0.5rem',
+                padding: '0.5rem 0.75rem', marginBottom: '0.5rem',
+              }}>⚠️ {otpError}</div>
+            )}
+            <OTPDisplay otp={otp} />
+          </>
+        )}
 
         {/* Route summary */}
         <div style={{ background: 'rgba(15,23,42,0.4)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1rem' }}>

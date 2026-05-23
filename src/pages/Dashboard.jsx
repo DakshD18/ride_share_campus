@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Navigation, Map, Search, Car, User, ShieldCheck, CheckCircle2, Clock, Star, Phone, MessageSquare, ChevronRight } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const savedRole = localStorage.getItem('userRole');
+        if (savedRole === 'passenger') {
+            navigate('/dashboard/passenger', { replace: true });
+        } else if (savedRole === 'driver') {
+            navigate('/dashboard/driver', { replace: true });
+        } else {
+            navigate('/role-select', { replace: true });
+        }
+    }, [navigate]);
+
     const [rideState, setRideState] = useState('idle'); // idle, searching, matched, riding, completed
     const [pickup, setPickup] = useState('');
     const [destination, setDestination] = useState('');

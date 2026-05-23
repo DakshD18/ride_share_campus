@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react';
+import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, AlertCircle } from 'lucide-react';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from 'firebase/auth';
+import { auth, googleProvider } from '../config/firebase';
 
 const injectKeyframes = () => {
   if (document.getElementById('login-keyframes')) return;
@@ -49,22 +55,70 @@ const Login = () => {
   injectKeyframes();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState('login');
+  const [tab, setTab]           = useState('login');
   const [showPass, setShowPass] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+  const [form, setForm]         = useState({ name: '', email: '', password: '' });
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // 🔥 Firebase Auth goes here
-    // After successful login/signup → go to role selection
-    navigate('/role-select');
+  const handleChange = (e) => {
+    setError('');
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleGoogle = () => {
-    // 🔥 Firebase Google Auth goes here
-    navigate('/role-select');
+  /** Save user info to localStorage so dashboards can access name/email */
+  const persistUser = (user) => {
+    localStorage.setItem('userEmail', user.email || '');
+    localStorage.setItem('userName',  user.displayName || form.name || user.email?.split('@')[0] || 'User');
+    localStorage.setItem('userUID',   user.uid);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      let userCredential;
+      if (tab === 'login') {
+        userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
+      } else {
+        userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      }
+      persistUser(userCredential.user);
+      navigate('/role-select');
+    } catch (err) {
+      // Convert Firebase error codes to friendly messages
+      const msgs = {
+        'auth/invalid-credential':       'Incorrect email or password.',
+        'auth/user-not-found':           'No account found with this email.',
+        'auth/wrong-password':           'Incorrect password.',
+        'auth/email-already-in-use':     'An account with this email already exists.',
+        'auth/weak-password':            'Password should be at least 6 characters.',
+        'auth/invalid-email':            'Please enter a valid email address.',
+        'auth/configuration-not-found':  '⚠️ Firebase not configured yet. Please add your credentials to firebase.js.',
+      };
+      setError(msgs[err.code] || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      persistUser(result.user);
+      navigate('/role-select');
+    } catch (err) {
+      const msgs = {
+        'auth/popup-closed-by-user':     'Sign-in cancelled.',
+        'auth/configuration-not-found':  '⚠️ Firebase not configured yet. Please add your credentials to firebase.js.',
+      };
+      setError(msgs[err.code] || err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -126,6 +180,17 @@ const Login = () => {
         </div>
 
         {/* Form */}
+        {/* Error Banner */}
+        {error && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
+            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: '0.65rem', padding: '0.75rem 1rem', marginBottom: '1rem',
+          }}>
+            <AlertCircle size={15} color="#f87171" style={{ flexShrink: 0 }} />
+            <span style={{ fontSize: '0.85rem', color: '#f87171', lineHeight: 1.4 }}>{error}</span>
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           {/* Name — signup only */}
           {tab === 'signup' && (
@@ -172,15 +237,17 @@ const Login = () => {
           )}
 
           {/* Submit */}
-          <button className="submit-btn" type="submit" style={{
+          <button className="submit-btn" type="submit" disabled={loading} style={{
             width: '100%', padding: '0.85rem', borderRadius: '0.75rem', border: 'none',
-            cursor: 'pointer', fontSize: '0.95rem', fontWeight: 700,
+            cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.95rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
             transition: 'all 0.2s', background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
             color: 'white', boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
             letterSpacing: '0.02em', marginTop: '0.5rem', fontFamily: 'inherit',
+            opacity: loading ? 0.7 : 1,
           }}>
-            {tab === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={17} />
+            {loading ? 'Please wait...' : (tab === 'login' ? 'Sign In' : 'Create Account')}
+            {!loading && <ArrowRight size={17} />}
           </button>
         </form>
 
@@ -192,14 +259,15 @@ const Login = () => {
         </div>
 
         {/* Google */}
-        <button className="google-btn" onClick={handleGoogle} style={{
+        <button className="google-btn" onClick={handleGoogle} disabled={loading} style={{
           width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', cursor: 'pointer',
+          border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem',
+          cursor: loading ? 'not-allowed' : 'pointer',
           color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
-          transition: 'all 0.2s', fontFamily: 'inherit',
+          transition: 'all 0.2s', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
         }}>
-          <GoogleIcon /> Sign in with Google
+          <GoogleIcon /> {loading ? 'Please wait...' : 'Sign in with Google'}
         </button>
 
         {/* Switch tab */}

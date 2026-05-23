@@ -132,18 +132,19 @@ const Pill = ({ icon: Icon, text, color }) => (
 const RoleSelect = () => {
   injectStyles();
   const navigate = useNavigate();
-  const [selected, setSelected] = useState(null); // 'passenger' | 'driver'
+  const [selected, setSelected] = useState(() => localStorage.getItem('userRole') || null); // 'passenger' | 'driver'
 
   const handleContinue = () => {
     if (!selected) return;
     // Save role to session/context/Firestore here
+    localStorage.setItem('userRole', selected);
     // Then navigate to the correct dashboard
     if (selected === 'passenger') navigate('/dashboard/passenger');
     else navigate('/dashboard/driver');
   };
 
-  // Simulate a logged-in user's name — replace with real Firebase user data
-  const userName = 'Arjun';
+  // Read real user name from localStorage (set during Firebase login)
+  const userName = localStorage.getItem('userName') || 'Student';
 
   return (
     <div className="rs-page" style={{

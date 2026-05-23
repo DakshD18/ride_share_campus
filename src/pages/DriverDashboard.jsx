@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { verifyOTP } from '../services/djangoApi';
+import RideMap from '../components/RideMap';
 import {
   Car, User, MapPin, Star, Clock, Home, Navigation,
   LogOut, ChevronRight, Shield, CheckCircle, ArrowRight,
@@ -167,16 +169,22 @@ const MOCK_REQUESTS = [
     id: 1, passengerName: 'Sneha Kulkarni', rating: 4.8, totalRides: 34,
     from: 'Hostel Block B', to: 'Main Auditorium',
     distance: '1.2 km', fare: 40, requestedAt: '2 min ago', photo: null,
+    pickupCoords: { lat: 28.5459, lng: 77.1926 }, // Main Building IITD area
+    dropCoords:   { lat: 28.5480, lng: 77.1850 },
   },
   {
     id: 2, passengerName: 'Rohit Verma', rating: 4.6, totalRides: 21,
     from: 'Canteen', to: 'Lab Complex',
     distance: '0.8 km', fare: 30, requestedAt: '4 min ago', photo: null,
+    pickupCoords: { lat: 28.5440, lng: 77.1910 },
+    dropCoords:   { lat: 28.5470, lng: 77.1950 },
   },
   {
     id: 3, passengerName: 'Aisha Siddiqui', rating: 4.9, totalRides: 67,
     from: 'Main Gate', to: 'Sports Ground',
     distance: '2.1 km', fare: 55, requestedAt: '6 min ago', photo: null,
+    pickupCoords: { lat: 28.5410, lng: 77.1880 },
+    dropCoords:   { lat: 28.5490, lng: 77.1900 },
   },
 ];
 
@@ -216,51 +224,7 @@ const Stars = ({ rating }) => (
   </div>
 );
 
-/* Map placeholder — green tinted for driver */
-const MapPlaceholder = ({ height = '260px', showCar = false }) => (
-  <div style={{
-    width: '100%', height, borderRadius: '1rem', overflow: 'hidden',
-    position: 'relative', background: '#061a10',
-    border: '1px solid rgba(16,185,129,0.1)',
-  }}>
-    <div style={{
-      position: 'absolute', inset: 0,
-      backgroundImage: `
-        linear-gradient(rgba(16,185,129,0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16,185,129,0.07) 1px, transparent 1px)
-      `,
-      backgroundSize: '40px 40px',
-    }} />
-    <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', background: 'rgba(16,185,129,0.12)', transform: 'translateY(-50%)' }} />
-    <div style={{ position: 'absolute', left: '35%', top: 0, bottom: 0, width: '2px', background: 'rgba(16,185,129,0.08)' }} />
-    <div style={{ position: 'absolute', left: '68%', top: 0, bottom: 0, width: '2px', background: 'rgba(16,185,129,0.08)' }} />
-    <div style={{ position: 'absolute', top: '28%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.03)' }} />
-    <div style={{ position: 'absolute', top: '72%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.03)' }} />
-    <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      <path d="M 60,200 Q 130,170 190,150 Q 250,130 300,95 Q 340,65 390,75"
-        stroke="#10b981" strokeWidth="2.5" fill="none" strokeDasharray="6,4" opacity="0.6" />
-    </svg>
-    {/* Passenger pickup marker */}
-    <div style={{ position: 'absolute', bottom: '30%', left: '11%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#3b82f6', border: '2px solid white', boxShadow: '0 0 8px rgba(59,130,246,0.6)' }} />
-      <div style={{ fontSize: '0.58rem', color: '#60a5fa', fontWeight: 700, marginTop: '2px', background: 'rgba(0,0,0,0.6)', padding: '1px 4px', borderRadius: '4px' }}>PICKUP</div>
-    </div>
-    {/* Drop marker */}
-    <div style={{ position: 'absolute', top: '16%', right: '14%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444', border: '2px solid white', boxShadow: '0 0 8px rgba(239,68,68,0.6)' }} />
-      <div style={{ fontSize: '0.58rem', color: '#f87171', fontWeight: 700, marginTop: '2px', background: 'rgba(0,0,0,0.6)', padding: '1px 4px', borderRadius: '4px' }}>DROP</div>
-    </div>
-    {showCar && (
-      <div style={{ position: 'absolute', top: '41%', left: '42%', animation: 'carMove 4s ease-in-out infinite' }}>
-        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 14px rgba(16,185,129,0.6)' }}>
-          <Car size={14} color="white" />
-        </div>
-      </div>
-    )}
-    <div style={{ position: 'absolute', top: '0.75rem', left: '0.75rem', fontSize: '0.7rem', color: '#1a3a28', fontWeight: 600, background: 'rgba(0,0,0,0.5)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>CAMPUS MAP</div>
-    <div style={{ position: 'absolute', bottom: '0.75rem', right: '0.75rem', fontSize: '0.65rem', color: '#0d2b1a', fontWeight: 600 }}>Google Maps will load here</div>
-  </div>
-);
+/* ── MapPlaceholder replaced by real Google Map (RideMap component) ──── */
 
 /* Ride status — green tinted */
 const RideStatus = ({ step }) => {
@@ -352,7 +316,7 @@ const OnlineToggle = ({ online, onToggle }) => (
 );
 
 /* OTP Entry */
-const OTPEntry = ({ value, onChange, onVerify, verified }) => {
+const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) => {
   const inputs = useRef([]);
 
   const handleKey = (e, i) => {
@@ -369,10 +333,12 @@ const OTPEntry = ({ value, onChange, onVerify, verified }) => {
     if (val && i < 3) inputs.current[i + 1]?.focus();
   };
 
+  const isFull = value.replace(/\s/g, '').length === 4;
+
   return (
     <div style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '1rem', padding: '1.25rem' }}>
       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem', textAlign: 'center' }}>
-        {verified ? '✅ OTP Verified — Ride Started!' : 'Enter Passenger OTP to Start Ride'}
+        {verified ? '✅ OTP Verified — Ride Started!' : verifying ? '⏳ Verifying with server...' : 'Enter Passenger OTP to Start Ride'}
       </div>
       <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginBottom: '0.85rem' }}>
         {[0, 1, 2, 3].map(i => (
@@ -384,27 +350,27 @@ const OTPEntry = ({ value, onChange, onVerify, verified }) => {
             maxLength={1} value={value[i] || ''}
             onChange={e => handleInput(e, i)}
             onKeyDown={e => handleKey(e, i)}
-            disabled={verified}
+            disabled={verified || verifying}
           />
         ))}
       </div>
       {!verified && (
         <button
           onClick={onVerify}
-          disabled={value.length < 4 || value.includes(' ')}
+          disabled={!isFull || verifying}
           style={{
             width: '100%', padding: '0.75rem', borderRadius: '0.75rem',
-            background: value.replace(/\s/g,'').length === 4
+            background: isFull && !verifying
               ? 'linear-gradient(135deg,#10b981,#059669)'
               : 'rgba(255,255,255,0.05)',
-            color: value.replace(/\s/g,'').length === 4 ? 'white' : '#334155',
-            border: 'none', cursor: value.replace(/\s/g,'').length === 4 ? 'pointer' : 'not-allowed',
+            color: isFull && !verifying ? 'white' : '#334155',
+            border: 'none', cursor: isFull && !verifying ? 'pointer' : 'not-allowed',
             fontWeight: 700, fontSize: '0.9rem', fontFamily: 'inherit',
-            transition: 'all 0.2s',
-            boxShadow: value.replace(/\s/g,'').length === 4 ? '0 4px 14px rgba(16,185,129,0.35)' : 'none',
+            transition: 'all 0.2s', opacity: verifying ? 0.7 : 1,
+            boxShadow: isFull && !verifying ? '0 4px 14px rgba(16,185,129,0.35)' : 'none',
           }}
         >
-          {value.replace(/\s/g,'').length === 4 ? 'Verify & Start Ride' : 'Enter all 4 digits'}
+          {verifying ? 'Verifying...' : isFull ? 'Verify & Start Ride' : 'Enter all 4 digits'}
         </button>
       )}
     </div>
@@ -425,13 +391,20 @@ const DriverDashboard = () => {
   const [otpValue, setOtpValue] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [rideCompleted, setRideCompleted] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false); // loading during API call
+  const [otpErrMsg, setOtpErrMsg] = useState('');          // inline error instead of alert
 
-  // Mock driver
+  // Pull real driver info from localStorage (set during Firebase login)
   const driver = {
-    name: 'Rahul Sharma', email: 'rahul@college.edu',
-    vehicle: 'Honda City', vehicleNo: 'MH 12 AB 1234',
-    vehicleColor: 'White', rating: 4.9, totalRides: 234,
-    memberSince: 'Sep 2024',
+    name:         localStorage.getItem('userName')  || 'Driver',
+    email:        localStorage.getItem('userEmail') || '',
+    uid:          localStorage.getItem('userUID')   || '',
+    vehicle:      'Honda City',
+    vehicleNo:    'MH 12 AB 1234',
+    vehicleColor: 'White',
+    rating:       4.9,
+    totalRides:   234,
+    memberSince:  'Sep 2024',
   };
 
   // Earnings mock
@@ -454,10 +427,18 @@ const DriverDashboard = () => {
     setRequests(prev => prev.filter(r => r.id !== id));
   };
 
-  const handleVerifyOTP = () => {
-    // In production: check against Firestore OTP
-    // For now simulate — correct OTP is '4721'
-    if (otpValue === '4721') {
+  const handleVerifyOTP = async () => {
+    setOtpErrMsg('');
+    setOtpVerifying(true);
+
+    // Build the ride_id: prefer one attached to activeRide, else use a fallback
+    const rideId = activeRide?.rideId || `ride_mock_${activeRide?.id || 0}`;
+
+    const result = await verifyOTP(rideId, otpValue);
+
+    setOtpVerifying(false);
+
+    if (result.success) {
       setOtpVerified(true);
       setRideStep(1);
       // Auto-advance ride status
@@ -468,7 +449,8 @@ const DriverDashboard = () => {
         if (step >= 2) clearInterval(interval);
       }, 4000);
     } else {
-      alert('Incorrect OTP. Ask the passenger to check their app.');
+      // Show friendly inline error instead of browser alert
+      setOtpErrMsg(result.error || 'Incorrect OTP. Ask the passenger to check their app.');
     }
   };
 
@@ -721,7 +703,13 @@ const DriverDashboard = () => {
         </div>
 
         {/* Map */}
-        <MapPlaceholder height="230px" showCar={otpVerified} />
+        <RideMap
+          height="230px"
+          pickupCoords={activeRide?.pickupCoords}
+          dropCoords={activeRide?.dropCoords}
+          showCar={otpVerified}
+          accentColor="green"
+        />
 
         {/* Ride status */}
         <RideStatus step={rideStep} />
@@ -754,13 +742,23 @@ const DriverDashboard = () => {
           </div>
         </div>
 
-        {/* OTP Entry */}
+        {/* OTP Entry — verifies against Django backend */}
         <OTPEntry
           value={otpValue}
-          onChange={setOtpValue}
+          onChange={(v) => { setOtpValue(v); setOtpErrMsg(''); }}
           onVerify={handleVerifyOTP}
           verified={otpVerified}
+          verifying={otpVerifying}
         />
+        {otpErrMsg && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+            borderRadius: '0.75rem', padding: '0.75rem 1rem', marginTop: '-0.25rem',
+          }}>
+            <span style={{ fontSize: '0.85rem', color: '#f87171' }}>❌ {otpErrMsg}</span>
+          </div>
+        )}
 
         {/* Complete ride button — only shows after OTP verified */}
         {otpVerified && !rideCompleted && (

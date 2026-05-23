@@ -29,7 +29,7 @@ const Navbar = () => {
                 {/* Desktop Menu */}
                 <div className="nav-links desktop-only">
                     <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Home</Link>
-                    <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}>Dashboard</Link>
+                    <Link to="/dashboard" className={`nav-link ${location.pathname.startsWith('/dashboard') ? 'active' : ''}`}>Dashboard</Link>
                     <div className="nav-actions">
                         <Link to="/login" className="btn btn-secondary" style={{ padding: '0.6rem 1.25rem' }}>
                             <LogIn size={18} />
