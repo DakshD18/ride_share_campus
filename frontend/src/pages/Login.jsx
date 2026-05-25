@@ -7,6 +7,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
+import { saveUserProfile } from '../services/firestoreApi';
 
 const injectKeyframes = () => {
   if (document.getElementById('login-keyframes')) return;
@@ -85,6 +86,8 @@ const Login = () => {
         userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       }
       persistUser(userCredential.user);
+      // Save/merge user profile to Firestore
+      await saveUserProfile({ ...userCredential.user, name: form.name });
       navigate('/role-select');
     } catch (err) {
       // Convert Firebase error codes to friendly messages
@@ -109,6 +112,8 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       persistUser(result.user);
+      // Save/merge user profile to Firestore
+      await saveUserProfile(result.user);
       navigate('/role-select');
     } catch (err) {
       const msgs = {

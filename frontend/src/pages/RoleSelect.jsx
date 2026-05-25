@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car, User, ArrowRight, MapPin, Shield, Star, Zap } from 'lucide-react';
+import { setUserRole } from '../services/firestoreApi';
 
 const injectStyles = () => {
   if (document.getElementById('role-select-styles')) return;
@@ -134,11 +135,14 @@ const RoleSelect = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(() => localStorage.getItem('userRole') || null); // 'passenger' | 'driver'
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selected) return;
-    // Save role to session/context/Firestore here
     localStorage.setItem('userRole', selected);
-    // Then navigate to the correct dashboard
+    // Save role to Firestore
+    const uid = localStorage.getItem('userUID');
+    if (uid) {
+      try { await setUserRole(uid, selected); } catch (e) { console.warn('Could not save role to Firestore:', e); }
+    }
     if (selected === 'passenger') navigate('/dashboard/passenger');
     else navigate('/dashboard/driver');
   };

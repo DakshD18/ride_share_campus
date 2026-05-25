@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { generateOTP } from '../services/djangoApi';
+import { Link, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import {
+  fetchAvailableRides,
+  bookRide,
+  listenToRide,
+  listenToPassengerRide,
+  fetchRideHistory,
+} from '../services/firestoreApi';
 import RideMap, { PlaceAutocomplete } from '../components/RideMap';
 import {
   Car, User, MapPin, Phone, QrCode, Star, Clock,
@@ -162,38 +170,8 @@ const injectStyles = () => {
 };
 
 /* ══════════════════════════════════════════
-   MOCK DATA
+   (Mock data removed — now using Firestore)
 ══════════════════════════════════════════ */
-const MOCK_DRIVERS = [
-  {
-    id: 1, name: 'Rahul Sharma', rating: 4.9, rides: 234,
-    vehicle: 'Honda City', vehicleNo: 'MH12 AB 1234',
-    vehicleColor: 'White', fare: 45, eta: '3 min',
-    phone: '9876543210', upiId: 'rahul.sharma@upi',
-    photo: null, online: true,
-  },
-  {
-    id: 2, name: 'Priya Patel', rating: 4.7, rides: 189,
-    vehicle: 'Maruti Swift', vehicleNo: 'MH14 CD 5678',
-    vehicleColor: 'Silver', fare: 38, eta: '5 min',
-    phone: '9123456780', upiId: 'priya.patel@upi',
-    photo: null, online: true,
-  },
-  {
-    id: 3, name: 'Arjun Nair', rating: 4.8, rides: 312,
-    vehicle: 'Hyundai i20', vehicleNo: 'MH04 EF 9012',
-    vehicleColor: 'Blue', fare: 52, eta: '7 min',
-    phone: '9988776655', upiId: 'arjun.nair@upi',
-    photo: null, online: true,
-  },
-];
-
-const MOCK_HISTORY = [
-  { id: 1, driver: 'Rahul Sharma', from: 'Main Gate', to: 'Library', date: 'Mar 10', fare: 45, status: 'completed' },
-  { id: 2, driver: 'Priya Patel', from: 'Hostel Block A', to: 'Canteen', date: 'Mar 9', fare: 30, status: 'completed' },
-  { id: 3, driver: 'Arjun Nair', from: 'Sports Ground', to: 'Admin Block', date: 'Mar 8', fare: 55, status: 'completed' },
-  { id: 4, driver: 'Kavya Reddy', from: 'Lab Complex', to: 'Main Gate', date: 'Mar 7', fare: 40, status: 'cancelled' },
-];
 
 /* ══════════════════════════════════════════
    SMALL COMPONENTS
@@ -361,6 +339,7 @@ const RideStatus = ({ step }) => {
 ══════════════════════════════════════════ */
 const PassengerDashboard = () => {
   injectStyles();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('book');
   const [pickup, setPickup] = useState('');
@@ -368,14 +347,18 @@ const PassengerDashboard = () => {
   const [pickupCoords, setPickupCoords] = useState(null);  // { lat, lng } from Places
   const [dropCoords, setDropCoords]     = useState(null);  // { lat, lng } from Places
   const [driversVisible, setDriversVisible] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [availableRides, setAvailableRides] = useState([]);
+  const [selectedRide, setSelectedRide] = useState(null);
   const [rideActive, setRideActive] = useState(false);
+  const [activeRideData, setActiveRideData] = useState(null);
   const [rideStep, setRideStep] = useState(1);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [otp, setOtp] = useState('----');             // filled by Django
+  const [otp, setOtp] = useState('------');
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
-  const [rideId, setRideId] = useState(null);          // Firestore ride ID (mocked for now)
+  const [rideId, setRideId] = useState(null);
+  const [rideHistory, setRideHistory] = useState([]);
+  const [driverLocation, setDriverLocation] = useState(null);
 
   // Pull real user info set during Firebase login
   const user = {
@@ -386,47 +369,92 @@ const PassengerDashboard = () => {
     memberSince: 'Jan 2025',
   };
 
-  const handleFindRides = () => {
-    if (pickup && drop) setDriversVisible(true);
+  // ── Listen for active ride (in case passenger already has one) ──
+  useEffect(() => {
+    if (!user.uid) return;
+    const unsub = listenToPassengerRide(user.uid, (ride) => {
+      if (ride) {
+        setRideActive(true);
+        setActiveRideData(ride);
+        setRideId(ride.id);
+        setOtp(ride.otp || '------');
+        // Map status to step
+        const statusStepMap = { booked: 0, started: 2, in_progress: 3 };
+        setRideStep(statusStepMap[ride.status] || 1);
+        // Update driver location for live tracking
+        if (ride.driverLat && ride.driverLng) {
+          setDriverLocation({ lat: ride.driverLat, lng: ride.driverLng });
+        }
+        if (ride.pickupCoords) setPickupCoords(ride.pickupCoords);
+        if (ride.destCoords) setDropCoords(ride.destCoords);
+      } else {
+        // No active ride
+        if (rideActive && activeRideData?.status === 'completed') {
+          // Ride just completed — could show rating
+        }
+      }
+    });
+    return () => unsub();
+  }, [user.uid]);
+
+  // ── Fetch ride history ──
+  useEffect(() => {
+    if (!user.uid) return;
+    fetchRideHistory(user.uid, 'passenger').then(setRideHistory).catch(console.error);
+  }, [user.uid, rideActive]);
+
+  const handleFindRides = async () => {
+    if (!pickup || !drop) {
+      alert("Please enter both pickup and destination.");
+      return;
+    }
+    try {
+      const rides = await fetchAvailableRides();
+      setAvailableRides(rides);
+      setDriversVisible(true);
+    } catch (err) {
+      console.error("Fetch rides error:", err);
+      alert("Error fetching rides: " + err.message);
+    }
   };
 
   const handleBookRide = async () => {
-    if (!selectedDriver) return;
+    if (!selectedRide) return;
 
-    // Generate a temporary ride ID (in production this comes from Firestore)
-    const mockRideId = `ride_${Date.now()}_${user.uid || 'anon'}`;
-    setRideId(mockRideId);
     setOtpLoading(true);
     setOtpError('');
 
-    const result = await generateOTP(mockRideId, user.uid, selectedDriver.id?.toString() || '');
-
-    if (result.success) {
-      setOtp(result.data.otp);
-    } else {
-      // Fallback: show a local OTP so UI still works even if Django is down
-      setOtp(String(Math.floor(1000 + Math.random() * 9000)));
-      setOtpError('Could not reach backend — showing local OTP.');
+    try {
+      const generatedOtp = await bookRide(selectedRide.id, user.uid, user.name);
+      setOtp(generatedOtp);
+      setRideId(selectedRide.id);
+      setRideActive(true);
+      setActiveTab('active');
+    } catch (err) {
+      setOtpError('Failed to book ride. Please try again.');
+      console.error('Booking error:', err);
+    } finally {
+      setOtpLoading(false);
     }
-    setOtpLoading(false);
-
-    setRideActive(true);
-    setActiveTab('active');
-    // Simulate ride progressing
-    let step = 1;
-    const interval = setInterval(() => {
-      step++;
-      setRideStep(step);
-      if (step >= 3) clearInterval(interval);
-    }, 4000);
   };
 
   const handleCall = () => {
-    if (selectedDriver) window.location.href = `tel:${selectedDriver.phone}`;
+    // In a real app, would fetch driver phone from Firestore
+    window.location.href = `tel:0000000000`;
   };
 
   const handleQR = () => {
-    if (selectedDriver) window.open(`upi://pay?pa=${selectedDriver.upiId}&pn=${selectedDriver.name}`, '_blank');
+    // Placeholder for UPI payment
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const navItems = [
@@ -483,9 +511,14 @@ const PassengerDashboard = () => {
             <div style={{ fontSize: '0.72rem', color: '#475569' }}>{user.email}</div>
           </div>
         </div>
-        <Link to="/role-select" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 0.75rem', borderRadius: '0.6rem', background: 'rgba(255,255,255,0.03)', color: '#475569', fontSize: '0.8rem', textDecoration: 'none', transition: 'all 0.2s' }}>
-          <LogOut size={14} /> Switch Role
-        </Link>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Link to="/role-select" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(255,255,255,0.03)', color: '#475569', fontSize: '0.75rem', textDecoration: 'none', transition: 'all 0.2s' }}>
+            <Car size={14} /> Switch Role
+          </Link>
+          <button onClick={handleLogout} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+            <LogOut size={14} /> Log Out
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -580,45 +613,53 @@ const PassengerDashboard = () => {
         <Search size={16} /> Find Available Drivers
       </button>
 
-      {/* Driver list */}
+      {/* Available rides list */}
       {driversVisible && (
         <div style={{ animation: 'pdFadeIn 0.4s ease' }}>
           <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.75rem' }}>
-            {MOCK_DRIVERS.length} Drivers Available
+            {availableRides.length} Ride{availableRides.length !== 1 ? 's' : ''} Available
           </div>
+          {availableRides.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#475569', fontSize: '0.88rem' }}>
+              No rides available right now. Check back in a few minutes.
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
-            {MOCK_DRIVERS.map(driver => (
-              <div key={driver.id} className={`pd-driver-card ${selectedDriver?.id === driver.id ? 'selected' : ''}`}
-                onClick={() => setSelectedDriver(driver)}
+            {availableRides.map(ride => (
+              <div key={ride.id} className={`pd-driver-card ${selectedRide?.id === ride.id ? 'selected' : ''}`}
+                onClick={() => setSelectedRide(ride)}
                 style={{
                   background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1rem', padding: '1rem',
                 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <Avatar name={driver.name} photo={driver.photo} size={44} fontSize='0.95rem' />
+                  <Avatar name={ride.driverName} photo={null} size={44} fontSize='0.95rem' />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
-                      <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne', sans-serif" }}>{driver.name}</span>
-                      <Stars rating={driver.rating} />
+                      <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne', sans-serif" }}>{ride.driverName}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.3rem' }}>
-                      <Car size={12} color="#60a5fa" />
-                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{driver.vehicle}</span>
-                      <span style={{ fontSize: '0.7rem', color: '#334155' }}>·</span>
-                      <span style={{ fontSize: '0.75rem', color: '#475569', fontFamily: 'monospace', fontWeight: 600 }}>{driver.vehicleNo}</span>
+                      <MapPin size={12} color="#10b981" />
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{ride.pickup}</span>
+                      <span style={{ fontSize: '0.7rem', color: '#334155' }}>→</span>
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{ride.destination}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                         <Clock size={11} color="#64748b" />
-                        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>{driver.eta}</span>
+                        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>{ride.time || 'Flexible'}</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                         <IndianRupee size={11} color="#10b981" />
-                        <span style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: 700 }}>₹{driver.fare}</span>
+                        <span style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: 700 }}>₹{ride.fare || 0}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <User size={11} color="#64748b" />
+                        <span style={{ fontSize: '0.78rem', color: '#64748b' }}>{ride.seats || 1} seat{(ride.seats || 1) !== 1 ? 's' : ''}</span>
                       </div>
                     </div>
                   </div>
-                  {selectedDriver?.id === driver.id && (
+                  {selectedRide?.id === ride.id && (
                     <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <CheckCircle size={12} color="white" />
                     </div>
@@ -627,9 +668,9 @@ const PassengerDashboard = () => {
               </div>
             ))}
           </div>
-          {selectedDriver && (
+          {selectedRide && (
             <button className="pd-btn-green" style={{ width: '100%' }} onClick={handleBookRide}>
-              Book Ride with {selectedDriver.name} <ArrowRight size={16} />
+              Book Ride with {selectedRide.driverName} <ArrowRight size={16} />
             </button>
           )}
         </div>
@@ -639,7 +680,8 @@ const PassengerDashboard = () => {
 
   /* ACTIVE RIDE TAB */
   const ActiveTab = () => {
-    if (!rideActive || !selectedDriver) return (
+    const rideInfo = activeRideData || selectedRide;
+    if (!rideActive || !rideInfo) return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', gap: '1rem', animation: 'pdFadeIn 0.4s ease' }}>
         <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Navigation size={28} color="#3b82f6" />
@@ -650,11 +692,21 @@ const PassengerDashboard = () => {
       </div>
     );
 
+    // Build a driver-like object for ActiveDriverCard
+    const driverCard = {
+      name: rideInfo.driverName || 'Driver',
+      rating: 4.5,
+      rides: 0,
+      vehicle: 'Campus Vehicle',
+      vehicleNo: '—',
+      vehicleColor: '—',
+      photo: null,
+    };
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animation: 'pdFadeIn 0.4s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.03em' }}>Active Ride</h2>
-      
         </div>
 
         {/* Map */}
@@ -662,7 +714,7 @@ const PassengerDashboard = () => {
           height="240px"
           pickupCoords={pickupCoords}
           dropCoords={dropCoords}
-          showCar={true}
+          showCar={rideStep >= 2}
           accentColor="blue"
         />
 
@@ -670,15 +722,15 @@ const PassengerDashboard = () => {
         <RideStatus step={rideStep} />
 
         {/* Driver card */}
-        <ActiveDriverCard driver={selectedDriver} onCall={handleCall} onQR={handleQR} />
+        <ActiveDriverCard driver={driverCard} onCall={handleCall} onQR={handleQR} />
 
-        {/* OTP — from Django backend */}
+        {/* OTP */}
         {otpLoading ? (
           <div style={{
             background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)',
             borderRadius: '1rem', padding: '1.5rem', textAlign: 'center',
           }}>
-            <div style={{ fontSize: '0.85rem', color: '#60a5fa' }}>⏳ Generating OTP from server...</div>
+            <div style={{ fontSize: '0.85rem', color: '#60a5fa' }}>⏳ Booking ride...</div>
           </div>
         ) : (
           <>
@@ -702,11 +754,11 @@ const PassengerDashboard = () => {
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600, marginBottom: '0.5rem' }}>{pickup || 'Main Gate'}</div>
-              <div style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600 }}>{drop || 'Library'}</div>
+              <div style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600, marginBottom: '0.5rem' }}>{rideInfo.pickup || pickup || 'Pickup'}</div>
+              <div style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600 }}>{rideInfo.destination || drop || 'Destination'}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#10b981' }}>₹{selectedDriver.fare}</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#10b981' }}>₹{rideInfo.fare || 0}</div>
               <div style={{ fontSize: '0.72rem', color: '#475569' }}>Est. fare</div>
             </div>
           </div>
@@ -721,8 +773,13 @@ const PassengerDashboard = () => {
       <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>Ride History</h2>
       <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '1.5rem' }}>Your past campus rides.</p>
 
+      {rideHistory.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#475569', fontSize: '0.88rem' }}>
+          No ride history yet. Your completed rides will appear here.
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-        {MOCK_HISTORY.map(ride => (
+        {rideHistory.map(ride => (
           <div key={ride.id} className="pd-history-row" style={{
             background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '1rem', padding: '1rem', transition: 'all 0.2s',
@@ -732,10 +789,10 @@ const PassengerDashboard = () => {
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: ride.status === 'completed' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${ride.status === 'completed' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Car size={14} color={ride.status === 'completed' ? '#10b981' : '#ef4444'} />
                 </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#e2e8f0' }}>{ride.driver}</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#e2e8f0' }}>{ride.driverName || 'Driver'}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#10b981' }}>₹{ride.fare}</span>
+                <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#10b981' }}>₹{ride.fare || 0}</span>
                 <span style={{
                   fontSize: '0.68rem', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 600,
                   background: ride.status === 'completed' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
@@ -754,12 +811,8 @@ const PassengerDashboard = () => {
                 <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#ef4444' }} />
               </div>
               <div>
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '6px' }}>{ride.from}</div>
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{ride.to}</div>
-              </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <Calendar size={11} color="#475569" />
-                <span style={{ fontSize: '0.75rem', color: '#475569' }}>{ride.date}</span>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '6px' }}>{ride.pickup}</div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{ride.destination}</div>
               </div>
             </div>
           </div>

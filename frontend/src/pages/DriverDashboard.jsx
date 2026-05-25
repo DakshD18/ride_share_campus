@@ -1,6 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 import { verifyOTP } from '../services/djangoApi';
+import {
+  listenToDriverRides,
+  verifyRideOTP,
+  updateRideStatus,
+  updateDriverLocation,
+  postRide,
+  fetchRideHistory,
+} from '../services/firestoreApi';
 import RideMap from '../components/RideMap';
 import {
   Car, User, MapPin, Star, Clock, Home, Navigation,
@@ -162,31 +172,9 @@ const injectStyles = () => {
 };
 
 /* ══════════════════════════════════════════
-   MOCK DATA
+   MOCK DATA (fallback when Firestore is empty)
 ══════════════════════════════════════════ */
-const MOCK_REQUESTS = [
-  {
-    id: 1, passengerName: 'Sneha Kulkarni', rating: 4.8, totalRides: 34,
-    from: 'Hostel Block B', to: 'Main Auditorium',
-    distance: '1.2 km', fare: 40, requestedAt: '2 min ago', photo: null,
-    pickupCoords: { lat: 28.5459, lng: 77.1926 }, // Main Building IITD area
-    dropCoords:   { lat: 28.5480, lng: 77.1850 },
-  },
-  {
-    id: 2, passengerName: 'Rohit Verma', rating: 4.6, totalRides: 21,
-    from: 'Canteen', to: 'Lab Complex',
-    distance: '0.8 km', fare: 30, requestedAt: '4 min ago', photo: null,
-    pickupCoords: { lat: 28.5440, lng: 77.1910 },
-    dropCoords:   { lat: 28.5470, lng: 77.1950 },
-  },
-  {
-    id: 3, passengerName: 'Aisha Siddiqui', rating: 4.9, totalRides: 67,
-    from: 'Main Gate', to: 'Sports Ground',
-    distance: '2.1 km', fare: 55, requestedAt: '6 min ago', photo: null,
-    pickupCoords: { lat: 28.5410, lng: 77.1880 },
-    dropCoords:   { lat: 28.5490, lng: 77.1900 },
-  },
-];
+const MOCK_REQUESTS = []; // Real data comes from Firestore listener
 
 const MOCK_EARNINGS = [
   { id: 1, passenger: 'Arjun Singh', from: 'Library', to: 'Hostel A', date: 'Today, 2:30 PM', fare: 45 },
@@ -382,10 +370,11 @@ const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) =>
 ══════════════════════════════════════════ */
 const DriverDashboard = () => {
   injectStyles();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('home');
   const [online, setOnline] = useState(false);
-  const [requests, setRequests] = useState(MOCK_REQUESTS);
+  const [requests, setRequests] = useState([]);
   const [activeRide, setActiveRide] = useState(null);
   const [rideStep, setRideStep] = useState(0);
   const [otpValue, setOtpValue] = useState('');
@@ -393,6 +382,15 @@ const DriverDashboard = () => {
   const [rideCompleted, setRideCompleted] = useState(false);
   const [otpVerifying, setOtpVerifying] = useState(false); // loading during API call
   const [otpErrMsg, setOtpErrMsg] = useState('');          // inline error instead of alert
+  const [rideHistory, setRideHistory] = useState([]);
+
+  // Ride posting state
+  const [postPickup, setPostPickup] = useState('PCCOE Gate #1');
+  const [postDestination, setPostDestination] = useState('Akurdi Station');
+  const [postFare, setPostFare] = useState('20');
+  const [postSeats, setPostSeats] = useState('3');
+  const [postTime, setPostTime] = useState('Now');
+  const [postingRide, setPostingRide] = useState(false);
 
   // Pull real driver info from localStorage (set during Firebase login)
   const driver = {
@@ -407,11 +405,83 @@ const DriverDashboard = () => {
     memberSince:  'Sep 2024',
   };
 
-  // Earnings mock
-  const todayEarnings = MOCK_EARNINGS
-    .filter(e => e.date.startsWith('Today'))
-    .reduce((sum, e) => sum + e.fare, 0);
-  const weekEarnings = MOCK_EARNINGS.reduce((sum, e) => sum + e.fare, 0);
+  // ── Listen to Firestore for booked rides assigned to this driver ──
+  useEffect(() => {
+    if (!driver.uid) return;
+    const unsub = listenToDriverRides(driver.uid, (rides) => {
+      // Separate booked requests from active rides
+      const booked = rides.filter(r => r.status === 'booked');
+      const active = rides.find(r => r.status === 'started' || r.status === 'in_progress');
+      setRequests(booked.map(r => ({
+        id: r.id,
+        rideId: r.id,
+        passengerName: r.passengerName || 'Passenger',
+        rating: 4.5,
+        totalRides: 0,
+        from: r.pickup,
+        to: r.destination,
+        distance: '',
+        fare: r.fare || 0,
+        requestedAt: 'Just now',
+        photo: null,
+        pickupCoords: r.pickupCoords,
+        dropCoords: r.destCoords,
+      })));
+      if (active && !activeRide) {
+        setActiveRide({
+          id: active.id,
+          rideId: active.id,
+          passengerName: active.passengerName || 'Passenger',
+          rating: 4.5,
+          from: active.pickup,
+          to: active.destination,
+          fare: active.fare || 0,
+          pickupCoords: active.pickupCoords,
+          dropCoords: active.destCoords,
+        });
+        setOtpVerified(true);
+        setRideStep(1);
+      }
+    });
+    return () => unsub();
+  }, [driver.uid]);
+
+  // ── Fetch ride history ──
+  useEffect(() => {
+    if (!driver.uid) return;
+    fetchRideHistory(driver.uid, 'driver').then(setRideHistory).catch(console.error);
+  }, [driver.uid, rideCompleted]);
+
+  // Earnings from history
+  const todayEarnings = rideHistory
+    .filter(r => r.status === 'completed')
+    .reduce((sum, r) => sum + (r.fare || 0), 0);
+  const weekEarnings = todayEarnings; // simplified for now
+
+  const handlePostRide = async () => {
+    if (!postPickup || !postDestination) {
+      alert("Please enter pickup and destination");
+      return;
+    }
+    setPostingRide(true);
+    try {
+      await postRide({
+        driverId: driver.uid,
+        driverName: driver.name,
+        pickup: postPickup,
+        destination: postDestination,
+        time: postTime,
+        seats: parseInt(postSeats),
+        fare: parseInt(postFare)
+      });
+      setOnline(true);
+    } catch (err) {
+      console.error(err);
+      alert("Error posting ride: " + err.message);
+    } finally {
+      setPostingRide(false);
+    }
+  };
 
   const handleAccept = (request) => {
     setActiveRide(request);
@@ -431,16 +501,18 @@ const DriverDashboard = () => {
     setOtpErrMsg('');
     setOtpVerifying(true);
 
-    // Build the ride_id: prefer one attached to activeRide, else use a fallback
-    const rideId = activeRide?.rideId || `ride_mock_${activeRide?.id || 0}`;
+    const rideId = activeRide?.rideId || activeRide?.id;
 
-    const result = await verifyOTP(rideId, otpValue);
+    // Verify OTP against Firestore
+    const result = await verifyRideOTP(rideId, otpValue);
 
     setOtpVerifying(false);
 
     if (result.success) {
       setOtpVerified(true);
       setRideStep(1);
+      // Start GPS tracking
+      startLocationTracking(rideId);
       // Auto-advance ride status
       let step = 1;
       const interval = setInterval(() => {
@@ -449,20 +521,53 @@ const DriverDashboard = () => {
         if (step >= 2) clearInterval(interval);
       }, 4000);
     } else {
-      // Show friendly inline error instead of browser alert
       setOtpErrMsg(result.error || 'Incorrect OTP. Ask the passenger to check their app.');
     }
   };
 
-  const handleCompleteRide = () => {
+  // ── GPS tracking: update driver location to Firestore ──
+  const watchIdRef = useRef(null);
+  const startLocationTracking = useCallback((rideId) => {
+    if (!navigator.geolocation) return;
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        updateDriverLocation(rideId, pos.coords.latitude, pos.coords.longitude).catch(console.error);
+      },
+      (err) => console.warn('GPS error:', err),
+      { enableHighAccuracy: true, maximumAge: 3000 }
+    );
+  }, []);
+
+  const stopLocationTracking = useCallback(() => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+  }, []);
+
+  const handleCompleteRide = async () => {
+    const rideId = activeRide?.rideId || activeRide?.id;
+    if (rideId) {
+      await updateRideStatus(rideId, 'completed').catch(console.error);
+    }
+    stopLocationTracking();
     setRideCompleted(true);
     setRideStep(3);
-    // Add to earnings
     setTimeout(() => {
       setActiveRide(null);
       setActiveTab('earnings');
       setOnline(true);
     }, 2000);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const navItems = [
@@ -526,9 +631,14 @@ const DriverDashboard = () => {
             <Stars rating={driver.rating} />
           </div>
         </div>
-        <Link to="/role-select" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 0.75rem', borderRadius: '0.6rem', background: 'rgba(255,255,255,0.03)', color: '#475569', fontSize: '0.8rem', textDecoration: 'none', transition: 'all 0.2s' }}>
-          <LogOut size={14} /> Switch Role
-        </Link>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Link to="/role-select" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(255,255,255,0.03)', color: '#475569', fontSize: '0.75rem', textDecoration: 'none', transition: 'all 0.2s' }}>
+            <User size={14} /> Switch Role
+          </Link>
+          <button onClick={handleLogout} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+            <LogOut size={14} /> Log Out
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -594,15 +704,43 @@ const DriverDashboard = () => {
         ))}
       </div>
 
-      {/* Ride requests */}
+      {/* Ride requests / Post form */}
       {!online ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', gap: '1rem', background: 'rgba(15,23,42,0.3)', borderRadius: '1.25rem', border: '1px dashed rgba(255,255,255,0.06)' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Power size={24} color="#334155" />
+        <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1.25rem', padding: '1.25rem' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem', fontFamily: "'Syne',sans-serif" }}>Offer a Ride</h3>
+          
+          <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div>
+              <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Leaving from</label>
+              <input type="text" value={postPickup} onChange={e => setPostPickup(e.target.value)}
+                style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Going to</label>
+              <input type="text" value={postDestination} onChange={e => setPostDestination(e.target.value)}
+                style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Fare (₹)</label>
+                <input type="number" value={postFare} onChange={e => setPostFare(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Available Seats</label>
+                <input type="number" value={postSeats} onChange={e => setPostSeats(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+              </div>
+            </div>
           </div>
-          <p style={{ fontSize: '0.88rem', color: '#475569', textAlign: 'center', lineHeight: 1.6, maxWidth: '240px' }}>
-            You're currently offline. Toggle the switch above to start receiving ride requests.
-          </p>
+          
+          <button 
+            onClick={handlePostRide} 
+            disabled={postingRide}
+            style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '0.75rem', padding: '0.85rem', fontWeight: 700, cursor: postingRide ? 'not-allowed' : 'pointer', opacity: postingRide ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 14px rgba(16,185,129,0.3)' }}
+          >
+            {postingRide ? 'Posting...' : 'Go Online & Offer Ride'}
+          </button>
         </div>
       ) : requests.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '3rem 1rem', gap: '1rem', background: 'rgba(15,23,42,0.3)', borderRadius: '1.25rem', border: '1px dashed rgba(16,185,129,0.1)' }}>

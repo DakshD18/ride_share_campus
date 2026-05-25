@@ -3,13 +3,14 @@
 // Google Maps configuration used across the app
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+export const GOOGLE_MAPS_API_KEY = 'AIzaSyDHbaiaDVBTxk26XmdDb-CGNUPPDwcasoM';
 
 // Libraries to load with the Maps API
-export const MAPS_LIBRARIES = ['places', 'directions'];
+// Note: DirectionsService is built-in, no library needed. 'geometry' is for route decoding.
+export const MAPS_LIBRARIES = ['places', 'geometry'];
 
-// Default map center: IIT Delhi (change to your campus coordinates)
-export const DEFAULT_CENTER = { lat: 28.5459, lng: 77.1926 };
+// Default map center: PCCOE, Akurdi
+export const DEFAULT_CENTER = { lat: 18.6517, lng: 73.7615 };
 
 // Dark map style that matches the app's dark theme
 export const DARK_MAP_STYLE = [
