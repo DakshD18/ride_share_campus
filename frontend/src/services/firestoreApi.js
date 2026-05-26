@@ -70,7 +70,7 @@ export async function getUserProfile(uid) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Driver posts a new ride.
+ * Driver posts a new ride (offer).
  * Returns the auto-generated Firestore document ID.
  */
 export async function postRide({
@@ -85,6 +85,7 @@ export async function postRide({
   fare,
 }) {
   const docRef = await addDoc(collection(db, 'rides'), {
+    type:          'offer',      // driver-initiated ride offer
     driverId,
     driverName,
     passengerId:   null,
@@ -108,6 +109,72 @@ export async function postRide({
 }
 
 /**
+ * Estimate fare based on distance between two coordinates.
+ * Uses Haversine formula. Base ₹10 + ₹8 per km, minimum ₹15.
+ */
+function estimateFare(pickupCoords, destCoords) {
+  if (!pickupCoords || !destCoords) return 15; // default minimum fare
+  const R = 6371; // Earth radius in km
+  const dLat = (destCoords.lat - pickupCoords.lat) * Math.PI / 180;
+  const dLng = (destCoords.lng - pickupCoords.lng) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(pickupCoords.lat * Math.PI / 180) *
+    Math.cos(destCoords.lat * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distKm = R * c;
+  const fare = Math.round(10 + distKm * 8); // ₹10 base + ₹8/km
+  return Math.max(fare, 15); // minimum ₹15
+}
+
+/**
+ * Passenger posts a ride request.
+ * Returns the auto-generated Firestore document ID.
+ */
+export async function postRideRequest({
+  passengerId,
+  passengerName,
+  pickup,
+  destination,
+  pickupCoords,
+  destCoords,
+}) {
+  const fare = estimateFare(pickupCoords, destCoords);
+  const docRef = await addDoc(collection(db, 'rides'), {
+    type:          'request',    // passenger-initiated ride request
+    driverId:      null,
+    driverName:    null,
+    passengerId,
+    passengerName,
+    pickup,
+    destination,
+    pickupCoords:  pickupCoords || null,
+    destCoords:    destCoords || null,
+    time:          'Now',
+    seats:         1,
+    fare,
+    status:        'requested',  // waiting for driver to accept
+    otp:           null,
+    driverLat:     null,
+    driverLng:     null,
+    createdAt:     serverTimestamp(),
+    completedAt:   null,
+    rating:        null,
+  });
+  return docRef.id;
+}
+
+/**
+ * Passenger cancels their ride (works for requested, booked, or in_progress).
+ */
+export async function cancelRideByPassenger(rideId) {
+  await updateDoc(doc(db, 'rides', rideId), {
+    status: 'cancelled',
+    completedAt: serverTimestamp(),
+  });
+}
+
+/**
  * Fetch all available rides (status === 'available').
  */
 export async function fetchAvailableRides() {
@@ -122,11 +189,11 @@ export async function fetchAvailableRides() {
 }
 
 /**
- * Passenger books a ride.
- * Sets status to "booked", stores passenger info and a 6-digit OTP.
+ * Passenger books a driver-offered ride.
+ * Sets status to "booked", stores passenger info and a 4-digit OTP.
  */
 export async function bookRide(rideId, passengerUid, passengerName) {
-  const otp = String(Math.floor(100000 + Math.random() * 900000)); // 6-digit
+  const otp = String(Math.floor(1000 + Math.random() * 9000)); // 4-digit
   await updateDoc(doc(db, 'rides', rideId), {
     passengerId:   passengerUid,
     passengerName: passengerName || '',
@@ -134,6 +201,33 @@ export async function bookRide(rideId, passengerUid, passengerName) {
     otp,
   });
   return otp;
+}
+
+/**
+ * Driver accepts a passenger's ride request.
+ * Sets driverId, status to "booked", and generates a 4-digit OTP.
+ */
+export async function acceptRideRequest(rideId, driverUid, driverName) {
+  const otp = String(Math.floor(1000 + Math.random() * 9000)); // 4-digit
+  await updateDoc(doc(db, 'rides', rideId), {
+    driverId:    driverUid,
+    driverName:  driverName || '',
+    status:      'booked',
+    otp,
+  });
+  return otp;
+}
+
+/**
+ * Driver declines a passenger's ride request.
+ * Resets driverId so other drivers can pick it up, or marks it declined.
+ */
+export async function declineRideRequest(rideId) {
+  // Just reset so other drivers can see it (or delete)
+  // For now we mark it cancelled
+  await updateDoc(doc(db, 'rides', rideId), {
+    status: 'cancelled',
+  });
 }
 
 /**
@@ -186,7 +280,7 @@ export function listenToRide(rideId, callback) {
 }
 
 /**
- * Listen to rides for a specific driver (incoming bookings).
+ * Listen to rides where this driver is assigned (their own offers + accepted requests).
  * Returns an unsubscribe function.
  */
 export function listenToDriverRides(driverUid, callback) {
@@ -202,13 +296,29 @@ export function listenToDriverRides(driverUid, callback) {
 }
 
 /**
- * Listen to a passenger's active ride.
+ * Listen to ALL pending passenger ride requests (status === 'requested').
+ * Drivers see these and can accept/decline them.
+ * Returns an unsubscribe function.
+ */
+export function listenToRideRequests(callback) {
+  const q = query(
+    collection(db, 'rides'),
+    where('status', '==', 'requested'),
+  );
+  return onSnapshot(q, (snap) => {
+    const rides = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    callback(rides);
+  });
+}
+
+/**
+ * Listen to a passenger's active ride (booked, requested, started, or in_progress).
  */
 export function listenToPassengerRide(passengerUid, callback) {
   const q = query(
     collection(db, 'rides'),
     where('passengerId', '==', passengerUid),
-    where('status', 'in', ['booked', 'started', 'in_progress']),
+    where('status', 'in', ['requested', 'booked', 'started', 'in_progress']),
   );
   return onSnapshot(q, (snap) => {
     const rides = snap.docs.map(d => ({ id: d.id, ...d.data() }));

@@ -5,6 +5,9 @@ import { auth } from '../config/firebase';
 import { verifyOTP } from '../services/djangoApi';
 import {
   listenToDriverRides,
+  listenToRideRequests,
+  acceptRideRequest,
+  declineRideRequest,
   verifyRideOTP,
   updateRideStatus,
   updateDriverLocation,
@@ -409,24 +412,8 @@ const DriverDashboard = () => {
   useEffect(() => {
     if (!driver.uid) return;
     const unsub = listenToDriverRides(driver.uid, (rides) => {
-      // Separate booked requests from active rides
-      const booked = rides.filter(r => r.status === 'booked');
+      // Find active ride (started / in_progress)
       const active = rides.find(r => r.status === 'started' || r.status === 'in_progress');
-      setRequests(booked.map(r => ({
-        id: r.id,
-        rideId: r.id,
-        passengerName: r.passengerName || 'Passenger',
-        rating: 4.5,
-        totalRides: 0,
-        from: r.pickup,
-        to: r.destination,
-        distance: '',
-        fare: r.fare || 0,
-        requestedAt: 'Just now',
-        photo: null,
-        pickupCoords: r.pickupCoords,
-        dropCoords: r.destCoords,
-      })));
       if (active && !activeRide) {
         setActiveRide({
           id: active.id,
@@ -445,6 +432,32 @@ const DriverDashboard = () => {
     });
     return () => unsub();
   }, [driver.uid]);
+
+  // ── Listen for incoming passenger ride requests ──
+  useEffect(() => {
+    if (!online) {
+      setRequests([]);
+      return;
+    }
+    const unsub = listenToRideRequests((rides) => {
+      setRequests(rides.map(r => ({
+        id: r.id,
+        rideId: r.id,
+        passengerName: r.passengerName || 'Passenger',
+        rating: 4.5,
+        totalRides: 0,
+        from: r.pickup,
+        to: r.destination,
+        distance: '',
+        fare: r.fare || 0,
+        requestedAt: 'Just now',
+        photo: null,
+        pickupCoords: r.pickupCoords,
+        dropCoords: r.destCoords,
+      })));
+    });
+    return () => unsub();
+  }, [online]);
 
   // ── Fetch ride history ──
   useEffect(() => {
@@ -483,18 +496,30 @@ const DriverDashboard = () => {
     }
   };
 
-  const handleAccept = (request) => {
-    setActiveRide(request);
-    setActiveTab('active');
-    setRideStep(0);
-    setOtpValue('');
-    setOtpVerified(false);
-    setRideCompleted(false);
-    setRequests(prev => prev.filter(r => r.id !== request.id));
+  const handleAccept = async (request) => {
+    try {
+      await acceptRideRequest(request.rideId || request.id, driver.uid, driver.name);
+      setActiveRide(request);
+      setActiveTab('active');
+      setRideStep(0);
+      setOtpValue('');
+      setOtpVerified(false);
+      setRideCompleted(false);
+      setRequests(prev => prev.filter(r => r.id !== request.id));
+    } catch (err) {
+      console.error('Error accepting ride request:', err);
+      alert('Failed to accept ride request. Please try again.');
+    }
   };
 
-  const handleDecline = (id) => {
-    setRequests(prev => prev.filter(r => r.id !== id));
+  const handleDecline = async (id) => {
+    try {
+      await declineRideRequest(id);
+      setRequests(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      console.error('Error declining ride request:', err);
+      setRequests(prev => prev.filter(r => r.id !== id));
+    }
   };
 
   const handleVerifyOTP = async () => {

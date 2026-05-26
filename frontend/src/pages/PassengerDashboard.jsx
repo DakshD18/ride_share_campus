@@ -5,6 +5,8 @@ import { auth } from '../config/firebase';
 import {
   fetchAvailableRides,
   bookRide,
+  postRideRequest,
+  cancelRideByPassenger,
   listenToRide,
   listenToPassengerRide,
   fetchRideHistory,
@@ -302,7 +304,7 @@ const ActiveDriverCard = ({ driver, onCall, onQR }) => (
 
 /* Ride status steps */
 const RideStatus = ({ step }) => {
-  const steps = ['Driver Assigned', 'Driver On The Way', 'Driver Arrived', 'Ride In Progress'];
+  const steps = ['Waiting for Driver', 'Driver Assigned', 'Driver Arrived', 'Ride In Progress'];
   return (
     <div style={{ padding: '1rem', background: 'rgba(15,23,42,0.4)', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
@@ -359,6 +361,7 @@ const PassengerDashboard = () => {
   const [rideId, setRideId] = useState(null);
   const [rideHistory, setRideHistory] = useState([]);
   const [driverLocation, setDriverLocation] = useState(null);
+  const [requestingRide, setRequestingRide] = useState(false);
 
   // Pull real user info set during Firebase login
   const user = {
@@ -379,8 +382,12 @@ const PassengerDashboard = () => {
         setRideId(ride.id);
         setOtp(ride.otp || '------');
         // Map status to step
-        const statusStepMap = { booked: 0, started: 2, in_progress: 3 };
-        setRideStep(statusStepMap[ride.status] || 1);
+        const statusStepMap = { requested: 0, booked: 1, started: 2, in_progress: 3 };
+        setRideStep(statusStepMap[ride.status] || 0);
+        // Auto-switch to active tab when driver accepts (status goes from requested to booked)
+        if (ride.status === 'booked' && activeTab === 'book') {
+          setActiveTab('active');
+        }
         // Update driver location for live tracking
         if (ride.driverLat && ride.driverLng) {
           setDriverLocation({ lat: ride.driverLat, lng: ride.driverLng });
@@ -388,10 +395,16 @@ const PassengerDashboard = () => {
         if (ride.pickupCoords) setPickupCoords(ride.pickupCoords);
         if (ride.destCoords) setDropCoords(ride.destCoords);
       } else {
-        // No active ride
-        if (rideActive && activeRideData?.status === 'completed') {
-          // Ride just completed — could show rating
-        }
+        // No active ride — clear all ride state
+        setRideActive(false);
+        setActiveRideData(null);
+        setRideId(null);
+        setOtp('------');
+        setRideStep(0);
+        setDriverLocation(null);
+        setSelectedRide(null);
+        setDriversVisible(false);
+        setAvailableRides([]);
       }
     });
     return () => unsub();
@@ -402,6 +415,32 @@ const PassengerDashboard = () => {
     if (!user.uid) return;
     fetchRideHistory(user.uid, 'passenger').then(setRideHistory).catch(console.error);
   }, [user.uid, rideActive]);
+
+  const handleRequestRide = async () => {
+    if (!pickup || !drop) {
+      alert("Please enter both pickup and destination.");
+      return;
+    }
+    setRequestingRide(true);
+    try {
+      const newRideId = await postRideRequest({
+        passengerId: user.uid,
+        passengerName: user.name,
+        pickup,
+        destination: drop,
+        pickupCoords: pickupCoords || null,
+        destCoords: dropCoords || null,
+      });
+      setRideId(newRideId);
+      setRideActive(true);
+      setActiveTab('active');
+    } catch (err) {
+      console.error('Error requesting ride:', err);
+      alert('Failed to send ride request. Please try again.');
+    } finally {
+      setRequestingRide(false);
+    }
+  };
 
   const handleFindRides = async () => {
     if (!pickup || !drop) {
@@ -435,6 +474,17 @@ const PassengerDashboard = () => {
       console.error('Booking error:', err);
     } finally {
       setOtpLoading(false);
+    }
+  };
+
+  const handleCancelRide = async () => {
+    if (!rideId) return;
+    try {
+      await cancelRideByPassenger(rideId);
+      // State will be cleared by the listener
+    } catch (err) {
+      console.error('Cancel error:', err);
+      alert('Failed to cancel ride. Please try again.');
     }
   };
 
@@ -608,8 +658,29 @@ const PassengerDashboard = () => {
         />
       </div>
 
-      {/* Find button */}
-      <button className="pd-btn-primary" style={{ width: '100%', marginBottom: '1.25rem' }} onClick={handleFindRides}>
+      {/* Request ride button (primary action) */}
+      <button
+        className="pd-btn-primary"
+        style={{ width: '100%', marginBottom: '0.75rem' }}
+        onClick={handleRequestRide}
+        disabled={requestingRide}
+      >
+        {requestingRide ? (
+          <><span style={{ display: 'inline-block', animation: 'pdFadeIn 0.5s ease infinite alternate' }}>⏳</span> Sending Request...</>
+        ) : (
+          <><Navigation size={16} /> Request a Ride</>
+        )}
+      </button>
+
+      {/* Divider */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '0.5rem 0 1rem' }}>
+        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+        <span style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 500 }}>or browse available rides</span>
+        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+      </div>
+
+      {/* Find available driver-offered rides (secondary) */}
+      <button className="pd-btn-ghost" style={{ width: '100%', marginBottom: '1.25rem' }} onClick={handleFindRides}>
         <Search size={16} /> Find Available Drivers
       </button>
 
@@ -703,10 +774,17 @@ const PassengerDashboard = () => {
       photo: null,
     };
 
+    const isWaitingForDriver = activeRideData?.status === 'requested';
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animation: 'pdFadeIn 0.4s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.03em' }}>Active Ride</h2>
+          {isWaitingForDriver && (
+            <span style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderRadius: '999px', border: '1px solid rgba(245,158,11,0.25)', fontWeight: 600 }}>
+              Searching for driver...
+            </span>
+          )}
         </div>
 
         {/* Map */}
@@ -721,27 +799,52 @@ const PassengerDashboard = () => {
         {/* Ride status */}
         <RideStatus step={rideStep} />
 
-        {/* Driver card */}
-        <ActiveDriverCard driver={driverCard} onCall={handleCall} onQR={handleQR} />
-
-        {/* OTP */}
-        {otpLoading ? (
+        {/* Waiting for driver message */}
+        {isWaitingForDriver && (
           <div style={{
-            background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)',
-            borderRadius: '1rem', padding: '1.5rem', textAlign: 'center',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
+            padding: '2rem 1rem', background: 'rgba(245,158,11,0.05)',
+            border: '1px solid rgba(245,158,11,0.15)', borderRadius: '1.25rem',
           }}>
-            <div style={{ fontSize: '0.85rem', color: '#60a5fa' }}>⏳ Booking ride...</div>
+            <div style={{ position: 'relative', width: '10px', height: '10px' }}>
+              <div className="status-ping" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#f59e0b' }} />
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f59e0b', fontFamily: "'Syne', sans-serif", marginBottom: '0.3rem' }}>Looking for nearby drivers</div>
+              <div style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.6, maxWidth: '300px' }}>
+                Your ride request has been sent. A driver will accept your request shortly.
+              </div>
+            </div>
           </div>
-        ) : (
+        )}
+
+        {/* Driver card - only show when driver is assigned */}
+        {!isWaitingForDriver && (
+          <ActiveDriverCard driver={driverCard} onCall={handleCall} onQR={handleQR} />
+        )}
+
+        {/* OTP - only show when driver is assigned */}
+        {!isWaitingForDriver && (
           <>
-            {otpError && (
+            {otpLoading ? (
               <div style={{
-                fontSize: '0.75rem', color: '#f87171', background: 'rgba(239,68,68,0.08)',
-                border: '1px solid rgba(239,68,68,0.2)', borderRadius: '0.5rem',
-                padding: '0.5rem 0.75rem', marginBottom: '0.5rem',
-              }}>⚠️ {otpError}</div>
+                background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)',
+                borderRadius: '1rem', padding: '1.5rem', textAlign: 'center',
+              }}>
+                <div style={{ fontSize: '0.85rem', color: '#60a5fa' }}>⏳ Booking ride...</div>
+              </div>
+            ) : (
+              <>
+                {otpError && (
+                  <div style={{
+                    fontSize: '0.75rem', color: '#f87171', background: 'rgba(239,68,68,0.08)',
+                    border: '1px solid rgba(239,68,68,0.2)', borderRadius: '0.5rem',
+                    padding: '0.5rem 0.75rem', marginBottom: '0.5rem',
+                  }}>⚠️ {otpError}</div>
+                )}
+                <OTPDisplay otp={otp} />
+              </>
             )}
-            <OTPDisplay otp={otp} />
           </>
         )}
 
@@ -763,6 +866,24 @@ const PassengerDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Cancel ride button */}
+        {(activeRideData?.status === 'requested' || activeRideData?.status === 'booked') && (
+          <button
+            onClick={handleCancelRide}
+            style={{
+              width: '100%', padding: '0.85rem', borderRadius: '0.75rem',
+              background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+              color: '#f87171', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
+              fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: '0.5rem', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.target.style.background = 'rgba(239,68,68,0.15)'; e.target.style.borderColor = 'rgba(239,68,68,0.4)'; }}
+            onMouseLeave={e => { e.target.style.background = 'rgba(239,68,68,0.08)'; e.target.style.borderColor = 'rgba(239,68,68,0.25)'; }}
+          >
+            <X size={16} /> Cancel Ride
+          </button>
+        )}
       </div>
     );
   };
