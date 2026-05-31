@@ -83,11 +83,11 @@ export const PlaceAutocomplete = ({ placeholder, value, onChange, onPlaceSelect,
   }, [autocomplete, onChange, onPlaceSelect]);
 
   if (loadError) {
-    return <input className={className} placeholder="Map API Error" disabled style={{...style, opacity: 0.5}} />;
+    return <input className={className} placeholder="Map API Error" disabled style={{ ...style, opacity: 0.5 }} />;
   }
 
   if (!isLoaded) {
-    return <input className={className} placeholder="Loading places..." disabled style={{...style, opacity: 0.5}} />;
+    return <input className={className} placeholder="Loading places..." disabled style={{ ...style, opacity: 0.5 }} />;
   }
 
   return (
@@ -124,8 +124,8 @@ const RideMap = ({
   const { isLoaded, loadError } = useGoogleMapsAPI();
 
   const mapRef = useRef(null);
-  const [directions, setDirections]       = useState(null);
-  const [carPosition, setCarPosition]     = useState(null);
+  const [directions, setDirections] = useState(null);
+  const [carPosition, setCarPosition] = useState(null);
   const animFrameRef = useRef(null);
   const routeIndexRef = useRef(0);
 
@@ -143,9 +143,9 @@ const RideMap = ({
     const svc = new window.google.maps.DirectionsService();
     svc.route(
       {
-        origin:      new window.google.maps.LatLng(pickupCoords.lat, pickupCoords.lng),
+        origin: new window.google.maps.LatLng(pickupCoords.lat, pickupCoords.lng),
         destination: new window.google.maps.LatLng(dropCoords.lat, dropCoords.lng),
-        travelMode:  window.google.maps.TravelMode.DRIVING,
+        travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
         if (status === 'OK') {
@@ -228,7 +228,9 @@ const RideMap = ({
   );
 
   const carIconColor = accentColor === 'green' ? '#10b981' : '#3b82f6';
-  const routeColor   = accentColor === 'green' ? '#10b981' : '#3b82f6';
+  const routeColor = accentColor === 'green' ? '#10b981' : '#3b82f6';
+
+
 
   return (
     <div style={{ height, borderRadius: '1rem', overflow: 'hidden', position: 'relative' }}>
@@ -266,9 +268,9 @@ const RideMap = ({
             options={{
               suppressMarkers: true,          // use our custom markers instead
               polylineOptions: {
-                strokeColor:   routeColor,
+                strokeColor: routeColor,
                 strokeOpacity: 0.8,
-                strokeWeight:  5,
+                strokeWeight: 5,
               },
             }}
           />
@@ -297,7 +299,7 @@ const RideMap = ({
           {!pickupCoords && !dropCoords
             ? 'Enter locations to see the route'
             : !dropCoords ? 'Enter drop location to see route'
-            : 'Enter pickup location'}
+              : 'Enter pickup location'}
         </div>
       )}
     </div>

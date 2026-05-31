@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -10,8 +10,13 @@ import {
   listenToRide,
   listenToPassengerRide,
   fetchRideHistory,
+  confirmPayment,
+  getDriverUpi,
 } from '../services/firestoreApi';
 import RideMap, { PlaceAutocomplete } from '../components/RideMap';
+import RatingModal from '../components/RatingModal';
+import PaymentModal from '../components/PaymentModal';
+import { useNotification } from '../hooks/useNotification';
 import {
   Car, User, MapPin, Phone, QrCode, Star, Clock,
   Home, Navigation, History, LogOut, Menu, X,
@@ -342,6 +347,7 @@ const RideStatus = ({ step }) => {
 const PassengerDashboard = () => {
   injectStyles();
   const navigate = useNavigate();
+  const { notify } = useNotification();
 
   const [activeTab, setActiveTab] = useState('book');
   const [pickup, setPickup] = useState('');
@@ -363,6 +369,14 @@ const PassengerDashboard = () => {
   const [driverLocation, setDriverLocation] = useState(null);
   const [requestingRide, setRequestingRide] = useState(false);
 
+  // Payment & Rating modal state
+  const [showPayment, setShowPayment] = useState(false);
+  const [showRating, setShowRating] = useState(false);
+  const [completedRideData, setCompletedRideData] = useState(null);
+  const [driverUpiId, setDriverUpiId] = useState('');
+  const prevStatusRef = useRef(null);
+  const lastRideDataRef = useRef(null);
+
   // Pull real user info set during Firebase login
   const user = {
     name:        localStorage.getItem('userName')  || 'Passenger',
@@ -377,6 +391,8 @@ const PassengerDashboard = () => {
     if (!user.uid) return;
     const unsub = listenToPassengerRide(user.uid, (ride) => {
       if (ride) {
+        lastRideDataRef.current = ride;
+        const prevStatus = prevStatusRef.current;
         setRideActive(true);
         setActiveRideData(ride);
         setRideId(ride.id);
@@ -384,10 +400,26 @@ const PassengerDashboard = () => {
         // Map status to step
         const statusStepMap = { requested: 0, booked: 1, started: 2, in_progress: 3 };
         setRideStep(statusStepMap[ride.status] || 0);
-        // Auto-switch to active tab when driver accepts (status goes from requested to booked)
-        if (ride.status === 'booked' && activeTab === 'book') {
-          setActiveTab('active');
+
+        // ── Notifications on status change ──
+        if (prevStatus !== ride.status) {
+          if (ride.status === 'booked' && prevStatus === 'requested') {
+            notify('🚗 Driver Assigned!', `${ride.driverName || 'A driver'} accepted your ride.`);
+            setActiveTab('active');
+            // Fetch driver UPI for payment later
+            if (ride.driverId) {
+              getDriverUpi(ride.driverId).then(setDriverUpiId).catch(console.error);
+            }
+          }
+          if (ride.status === 'booked' && ride.otp) {
+            notify('🔑 OTP Generated', `Your ride OTP is ${ride.otp}. Share it with your driver.`);
+          }
+          if (ride.status === 'started') {
+            notify('🏁 Ride Started!', 'Your ride is now in progress. Enjoy the trip!');
+          }
+          prevStatusRef.current = ride.status;
         }
+
         // Update driver location for live tracking
         if (ride.driverLat && ride.driverLng) {
           setDriverLocation({ lat: ride.driverLat, lng: ride.driverLng });
@@ -395,6 +427,18 @@ const PassengerDashboard = () => {
         if (ride.pickupCoords) setPickupCoords(ride.pickupCoords);
         if (ride.destCoords) setDropCoords(ride.destCoords);
       } else {
+        // Check if ride just completed (was active, now null)
+        if (prevStatusRef.current && prevStatusRef.current !== 'cancelled') {
+          // Ride completed — save the last known data for payment & rating
+          if (lastRideDataRef.current) {
+            setCompletedRideData(lastRideDataRef.current);
+          }
+          // Ride completed — show payment modal
+          notify('✅ Ride Completed!', 'Your ride has been completed. Please proceed to payment.');
+          setShowPayment(true);
+        }
+        prevStatusRef.current = null;
+        lastRideDataRef.current = null;
         // No active ride — clear all ride state
         setRideActive(false);
         setActiveRideData(null);
@@ -494,7 +538,24 @@ const PassengerDashboard = () => {
   };
 
   const handleQR = () => {
-    // Placeholder for UPI payment
+    setShowPayment(true);
+  };
+
+  const handlePaymentConfirmed = async () => {
+    if (rideId) {
+      await confirmPayment(rideId).catch(console.error);
+    }
+    setShowPayment(false);
+    // Save completed ride info for rating
+    setCompletedRideData(activeRideData);
+    // Show rating modal after a short delay
+    setTimeout(() => setShowRating(true), 500);
+  };
+
+  const handleRatingClose = () => {
+    setShowRating(false);
+    setCompletedRideData(null);
+    setActiveTab('book');
   };
 
   const handleLogout = async () => {
@@ -1018,6 +1079,29 @@ const PassengerDashboard = () => {
           {tabContent[activeTab]}
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <PaymentModal
+          fare={activeRideData?.fare || completedRideData?.fare || 0}
+          driverName={activeRideData?.driverName || completedRideData?.driverName || 'Driver'}
+          driverUpi={driverUpiId}
+          role="passenger"
+          onPaid={handlePaymentConfirmed}
+          onClose={() => setShowPayment(false)}
+        />
+      )}
+
+      {/* Rating Modal */}
+      {showRating && completedRideData && (
+        <RatingModal
+          rideId={completedRideData.id || rideId}
+          fromUid={user.uid}
+          toUid={completedRideData.driverId}
+          toName={completedRideData.driverName || 'Driver'}
+          onClose={handleRatingClose}
+        />
+      )}
     </div>
   );
 };

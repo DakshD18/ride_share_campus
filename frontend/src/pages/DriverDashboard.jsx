@@ -13,8 +13,12 @@ import {
   updateDriverLocation,
   postRide,
   fetchRideHistory,
+  confirmPayment,
+  setDriverUpi,
 } from '../services/firestoreApi';
 import RideMap from '../components/RideMap';
+import PaymentModal from '../components/PaymentModal';
+import { useNotification } from '../hooks/useNotification';
 import {
   Car, User, MapPin, Star, Clock, Home, Navigation,
   LogOut, ChevronRight, Shield, CheckCircle, ArrowRight,
@@ -318,8 +322,8 @@ const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) =>
 
   const handleInput = (e, i) => {
     const val = e.target.value.replace(/\D/g, '').slice(-1);
-    const newOtp = value.split('');
-    newOtp[i] = val;
+    const newOtp = value.padEnd(4, ' ').split('');
+    newOtp[i] = val || ' ';
     onChange(newOtp.join(''));
     if (val && i < 3) inputs.current[i + 1]?.focus();
   };
@@ -338,7 +342,7 @@ const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) =>
             ref={el => inputs.current[i] = el}
             className={`dd-otp-input ${value[i] ? 'filled' : ''}`}
             type="text" inputMode="numeric"
-            maxLength={1} value={value[i] || ''}
+            maxLength={1} value={value[i]?.trim() || ''}
             onChange={e => handleInput(e, i)}
             onKeyDown={e => handleKey(e, i)}
             disabled={verified || verifying}
@@ -374,6 +378,7 @@ const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) =>
 const DriverDashboard = () => {
   injectStyles();
   const navigate = useNavigate();
+  const { notify } = useNotification();
 
   const [activeTab, setActiveTab] = useState('home');
   const [online, setOnline] = useState(false);
@@ -394,6 +399,12 @@ const DriverDashboard = () => {
   const [postSeats, setPostSeats] = useState('3');
   const [postTime, setPostTime] = useState('Now');
   const [postingRide, setPostingRide] = useState(false);
+
+  // Payment modal state
+  const [showPayment, setShowPayment] = useState(false);
+  const [completedRideData, setCompletedRideData] = useState(null);
+  const [upiId, setUpiId] = useState(localStorage.getItem('driverUpiId') || '');
+  const prevRequestCountRef = useRef(0);
 
   // Pull real driver info from localStorage (set during Firebase login)
   const driver = {
@@ -440,7 +451,7 @@ const DriverDashboard = () => {
       return;
     }
     const unsub = listenToRideRequests((rides) => {
-      setRequests(rides.map(r => ({
+      const mapped = rides.map(r => ({
         id: r.id,
         rideId: r.id,
         passengerName: r.passengerName || 'Passenger',
@@ -454,7 +465,14 @@ const DriverDashboard = () => {
         photo: null,
         pickupCoords: r.pickupCoords,
         dropCoords: r.destCoords,
-      })));
+      }));
+      // Notify on new requests
+      if (mapped.length > prevRequestCountRef.current) {
+        const newest = mapped[0];
+        notify('🙋 New Ride Request!', `${newest?.passengerName || 'A passenger'} is looking for a ride.`);
+      }
+      prevRequestCountRef.current = mapped.length;
+      setRequests(mapped);
     });
     return () => unsub();
   }, [online]);
@@ -578,11 +596,37 @@ const DriverDashboard = () => {
     stopLocationTracking();
     setRideCompleted(true);
     setRideStep(3);
+    notify('✅ Ride Completed!', `Ride with ${activeRide?.passengerName || 'passenger'} is done.`);
+    // Store ride data for rating before clearing
+    setCompletedRideData({ ...activeRide });
+    // Show payment confirmation after a delay
     setTimeout(() => {
-      setActiveRide(null);
-      setActiveTab('earnings');
-      setOnline(true);
+      setShowPayment(true);
     }, 2000);
+  };
+
+  const handlePaymentConfirmed = async () => {
+    const rideId = completedRideData?.rideId || completedRideData?.id;
+    if (rideId) {
+      await confirmPayment(rideId).catch(console.error);
+    }
+    setShowPayment(false);
+    // Go to earnings after payment
+    setActiveRide(null);
+    setActiveTab('earnings');
+    setOnline(true);
+    setCompletedRideData(null);
+  };
+
+  const handleSaveUpi = async () => {
+    if (!upiId.trim()) return;
+    try {
+      await setDriverUpi(driver.uid, upiId.trim());
+      localStorage.setItem('driverUpiId', upiId.trim());
+      alert('UPI ID saved successfully!');
+    } catch (err) {
+      console.error('Error saving UPI:', err);
+    }
   };
 
   const handleLogout = async () => {
@@ -1041,6 +1085,21 @@ const DriverDashboard = () => {
         </div>
       </div>
 
+      {/* UPI ID setting */}
+      <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(139,92,246,0.12)', borderRadius: '1.1rem', padding: '1.25rem', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.85rem' }}>Payment Setup</div>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+          <input
+            type="text"
+            placeholder="Enter your UPI ID (e.g. name@upi)"
+            value={upiId}
+            onChange={e => setUpiId(e.target.value)}
+            style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none', fontFamily: 'monospace', fontSize: '0.9rem' }}
+          />
+          <button onClick={handleSaveUpi} style={{ padding: '0.75rem 1.25rem', background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem', fontFamily: 'inherit', transition: 'all 0.2s' }}>Save</button>
+        </div>
+      </div>
+
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
         {[
@@ -1077,21 +1136,35 @@ const DriverDashboard = () => {
      RENDER
   ══════════════════════════════ */
   const tabContent = {
-    home: <HomeTab />,
-    active: <ActiveTab />,
-    earnings: <EarningsTab />,
-    profile: <ProfileTab />,
+    home: HomeTab(),
+    active: ActiveTab(),
+    earnings: EarningsTab(),
+    profile: ProfileTab(),
   };
 
   return (
     <div className="dd-root" style={{ minHeight: '100vh', background: '#020617' }}>
-      <Sidebar />
-      <MobileNav />
+      {Sidebar()}
+      {MobileNav()}
       <div className="dd-main" style={{ marginLeft: '240px', minHeight: '100vh', padding: '2rem' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           {tabContent[activeTab]}
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <PaymentModal
+          fare={completedRideData?.fare || activeRide?.fare || 0}
+          driverName={driver.name}
+          driverUpi={upiId}
+          role="driver"
+          onPaid={handlePaymentConfirmed}
+          onClose={() => setShowPayment(false)}
+        />
+      )}
+
+
     </div>
   );
 };
