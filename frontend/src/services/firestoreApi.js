@@ -375,3 +375,55 @@ export async function submitRating({ rideId, fromUid, toUid, rating, comment = '
     });
   }
 }
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PAYMENT
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Confirm payment for a ride (sets paymentStatus to 'paid').
+ */
+export async function confirmPayment(rideId) {
+  await updateDoc(doc(db, 'rides', rideId), {
+    paymentStatus: 'paid',
+    paidAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Save driver's UPI ID to their user profile.
+ */
+export async function setDriverUpi(uid, upiId) {
+  await updateDoc(doc(db, 'users', uid), { upiId });
+}
+
+/**
+ * Get a driver's UPI ID from their user profile.
+ */
+export async function getDriverUpi(uid) {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? snap.data().upiId || '' : '';
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN QUERIES
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch all users (for admin dashboard).
+ */
+export async function fetchAllUsers() {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+}
+
+/**
+ * Fetch all rides (for admin dashboard).
+ */
+export async function fetchAllRides() {
+  const snap = await getDocs(collection(db, 'rides'));
+  const rides = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return rides.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+}

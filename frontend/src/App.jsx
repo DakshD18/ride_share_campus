@@ -7,6 +7,7 @@ import RoleSelect from './pages/RoleSelect';
 import PassengerDashboard from './pages/PassengerDashboard';
 import DriverDashboard from './pages/DriverDashboard';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import { GoogleMapsProvider } from './components/GoogleMapsProvider';
 import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard/passenger" element={<PassengerDashboard />} />
           <Route path="/dashboard/driver"    element={<DriverDashboard />} />
           <Route path="/dashboard"           element={<Dashboard />} />
+          <Route path="/admin"               element={<AdminDashboard />} />
         </Routes>
       </Router>
     </GoogleMapsProvider>
