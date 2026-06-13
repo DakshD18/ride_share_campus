@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, AlertCircle } from 'lucide-react';
+import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Shield, AlertCircle, Sparkles } from 'lucide-react';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -14,7 +14,6 @@ const injectKeyframes = () => {
   const style = document.createElement('style');
   style.id = 'login-keyframes';
   style.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap');
     @keyframes cardIn {
       from { opacity: 0; transform: translateY(24px) scale(0.98); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -28,12 +27,12 @@ const injectKeyframes = () => {
       50%     { transform: translate(-20px,-30px) scale(1.08); }
     }
     .login-input:focus {
-      border-color: rgba(59,130,246,0.5) !important;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.12) !important;
-      background: rgba(2,6,23,0.9) !important;
+      border-color: rgba(99,102,241,0.5) !important;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+      background: rgba(6,6,15,0.8) !important;
     }
     .google-btn:hover {
-      background: rgba(255,255,255,0.08) !important;
+      background: rgba(255,255,255,0.06) !important;
       border-color: rgba(255,255,255,0.15) !important;
       transform: translateY(-1px);
     }
@@ -129,55 +128,56 @@ const Login = () => {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '2rem 1.5rem', fontFamily: "'Syne', sans-serif",
+      padding: '2rem 1.5rem', fontFamily: 'var(--font-body)',
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Background orbs */}
-      <div style={{ position: 'fixed', top: '-20%', left: '-10%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0, animation: 'orbFloat1 8s ease-in-out infinite' }} />
-      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0, animation: 'orbFloat2 10s ease-in-out infinite' }} />
+      <div style={{ position: 'fixed', top: '-20%', left: '-10%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0, animation: 'orbFloat1 8s ease-in-out infinite' }} />
+      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0, animation: 'orbFloat2 10s ease-in-out infinite' }} />
+      <div style={{ position: 'fixed', top: '50%', left: '50%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,158,11,0.05) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Card */}
       <div style={{
         position: 'relative', zIndex: 1, width: '100%', maxWidth: '440px',
-        background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.5rem', padding: '2.5rem',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)',
+        background: 'rgba(14,14,36,0.65)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1.5rem', padding: '2.5rem',
+        boxShadow: '0 25px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
         animation: 'cardIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards',
       }}>
         {/* Top shimmer line */}
-        <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.6), transparent)', borderRadius: '1px' }} />
+        <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent)', borderRadius: '1px' }} />
 
         {/* Brand */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', marginBottom: '2rem' }}>
-          <div style={{ width: '34px', height: '34px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(59,130,246,0.4)', flexShrink: 0 }}>
+          <div style={{ width: '34px', height: '34px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(99,102,241,0.4)', flexShrink: 0 }}>
             <Car size={18} />
           </div>
-          <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.04em' }}>
+          <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f1f0ff', letterSpacing: '-0.04em', fontFamily: 'var(--font-heading)' }}>
             RideShare
-            <span style={{ background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
+            <span style={{ background: 'linear-gradient(135deg, #818cf8, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
           </span>
         </Link>
 
         {/* Heading */}
-        <h1 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', marginBottom: '0.4rem', lineHeight: 1.2 }}>
+        <h1 style={{ fontSize: '1.65rem', fontWeight: 700, color: '#f1f0ff', letterSpacing: '-0.03em', marginBottom: '0.4rem', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
           {tab === 'login' ? 'Welcome back 👋' : 'Create account'}
         </h1>
-        <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '2rem', lineHeight: 1.5 }}>
+        <p style={{ fontSize: '0.9rem', color: '#706d8a', marginBottom: '2rem', lineHeight: 1.5 }}>
           {tab === 'login'
             ? 'Sign in with your college email to continue.'
             : 'Join your campus ride-sharing community.'}
         </p>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', marginBottom: '1.75rem', background: 'rgba(0,0,0,0.3)', borderRadius: '0.65rem', padding: '4px' }}>
+        <div style={{ display: 'flex', marginBottom: '1.75rem', background: 'rgba(6,6,15,0.5)', borderRadius: '0.75rem', padding: '4px', border: '1px solid rgba(255,255,255,0.05)' }}>
           {['login', 'signup'].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              flex: 1, padding: '0.55rem', borderRadius: '0.5rem', border: 'none',
+              flex: 1, padding: '0.55rem', borderRadius: '0.6rem', border: 'none',
               cursor: 'pointer', fontSize: '0.88rem', fontWeight: 600,
-              transition: 'all 0.2s', fontFamily: 'inherit',
-              background: tab === t ? 'rgba(59,130,246,0.2)' : 'transparent',
-              color: tab === t ? '#93c5fd' : '#64748b',
-              boxShadow: tab === t ? 'inset 0 0 0 1px rgba(59,130,246,0.3)' : 'none',
+              transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1)', fontFamily: 'var(--font-heading)',
+              background: tab === t ? 'rgba(99,102,241,0.15)' : 'transparent',
+              color: tab === t ? '#818cf8' : '#706d8a',
+              boxShadow: tab === t ? 'inset 0 0 0 1px rgba(99,102,241,0.3)' : 'none',
             }}>
               {t === 'login' ? 'Login' : 'Sign Up'}
             </button>
@@ -189,8 +189,8 @@ const Login = () => {
         {error && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '0.6rem',
-            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-            borderRadius: '0.65rem', padding: '0.75rem 1rem', marginBottom: '1rem',
+            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+            borderRadius: '0.75rem', padding: '0.75rem 1rem', marginBottom: '1rem',
           }}>
             <AlertCircle size={15} color="#f87171" style={{ flexShrink: 0 }} />
             <span style={{ fontSize: '0.85rem', color: '#f87171', lineHeight: 1.4 }}>{error}</span>
@@ -200,35 +200,35 @@ const Login = () => {
           {/* Name — signup only */}
           {tab === 'signup' && (
             <div style={{ marginBottom: '1.1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Full Name</label>
+              <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#706d8a', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>Full Name</label>
               <input className="login-input" name="name" type="text" placeholder="Your full name"
                 value={form.name} onChange={handleChange} required
-                style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(2,6,23,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.65rem', color: '#f8fafc', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit' }} />
+                style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(6,6,15,0.6)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '0.75rem', color: '#f1f0ff', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'var(--font-body)' }} />
             </div>
           )}
 
           {/* Email */}
           <div style={{ marginBottom: '1.1rem' }}>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Email</label>
+            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#706d8a', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>Email</label>
             <div style={{ position: 'relative' }}>
-              <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: '#475569', display: 'flex', pointerEvents: 'none' }}><Mail size={15} /></span>
+              <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: '#45425e', display: 'flex', pointerEvents: 'none' }}><Mail size={15} /></span>
               <input className="login-input" name="email" type="email" placeholder="your@email."
                 value={form.email} onChange={handleChange} required
-                style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.6rem', background: 'rgba(2,6,23,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.65rem', color: '#f8fafc', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit' }} />
+                style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.6rem', background: 'rgba(6,6,15,0.6)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '0.75rem', color: '#f1f0ff', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'var(--font-body)' }} />
             </div>
           </div>
 
           {/* Password */}
           <div style={{ marginBottom: '1.1rem' }}>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Password</label>
+            <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#706d8a', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>Password</label>
             <div style={{ position: 'relative' }}>
-              <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: '#475569', display: 'flex', pointerEvents: 'none' }}><Lock size={15} /></span>
+              <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: '#45425e', display: 'flex', pointerEvents: 'none' }}><Lock size={15} /></span>
               <input className="login-input" name="password" type={showPass ? 'text' : 'password'}
                 placeholder={tab === 'signup' ? 'Create a password' : 'Your password'}
                 value={form.password} onChange={handleChange} required
-                style={{ width: '100%', padding: '0.75rem 2.8rem 0.75rem 2.6rem', background: 'rgba(2,6,23,0.7)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.65rem', color: '#f8fafc', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit' }} />
+                style={{ width: '100%', padding: '0.75rem 2.8rem 0.75rem 2.6rem', background: 'rgba(6,6,15,0.6)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '0.75rem', color: '#f1f0ff', fontSize: '0.95rem', outline: 'none', transition: 'all 0.2s', fontFamily: 'var(--font-body)' }} />
               <button type="button" onClick={() => setShowPass(!showPass)}
-                style={{ position: 'absolute', right: '0.9rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#475569', cursor: 'pointer', display: 'flex', padding: '2px' }}>
+                style={{ position: 'absolute', right: '0.9rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#45425e', cursor: 'pointer', display: 'flex', padding: '2px' }}>
                 {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
@@ -237,7 +237,7 @@ const Login = () => {
           {/* Forgot password */}
           {tab === 'login' && (
             <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.4rem' }}>
-              <a href="#" style={{ fontSize: '0.8rem', color: '#60a5fa', textDecoration: 'none' }}>Forgot password?</a>
+              <a href="#" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none' }}>Forgot password?</a>
             </div>
           )}
 
@@ -246,9 +246,9 @@ const Login = () => {
             width: '100%', padding: '0.85rem', borderRadius: '0.75rem', border: 'none',
             cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.95rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-            transition: 'all 0.2s', background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-            color: 'white', boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
-            letterSpacing: '0.02em', marginTop: '0.5rem', fontFamily: 'inherit',
+            transition: 'all 0.2s', background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            color: 'white', boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
+            letterSpacing: '-0.01em', marginTop: '0.5rem', fontFamily: 'var(--font-heading)',
             opacity: loading ? 0.7 : 1,
           }}>
             {loading ? 'Please wait...' : (tab === 'login' ? 'Sign In' : 'Create Account')}
@@ -257,35 +257,35 @@ const Login = () => {
         </form>
 
         {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '1.25rem 0', color: '#334155', fontSize: '0.8rem' }}>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '1.25rem 0', color: '#45425e', fontSize: '0.8rem' }}>
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
           <span>or continue with</span>
-          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+          <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.05)' }} />
         </div>
 
         {/* Google */}
         <button className="google-btn" onClick={handleGoogle} disabled={loading} style={{
-          width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem',
+          width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)', borderRadius: '0.75rem',
           cursor: loading ? 'not-allowed' : 'pointer',
-          color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600,
+          color: '#b8b5d0', fontSize: '0.9rem', fontWeight: 600,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
-          transition: 'all 0.2s', fontFamily: 'inherit', opacity: loading ? 0.6 : 1,
+          transition: 'all 0.2s', fontFamily: 'var(--font-heading)', opacity: loading ? 0.6 : 1,
         }}>
           <GoogleIcon /> {loading ? 'Please wait...' : 'Sign in with Google'}
         </button>
 
         {/* Switch tab */}
-        <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#64748b' }}>
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#706d8a' }}>
           {tab === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <a href="#" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 600 }}
+          <a href="#" style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}
             onClick={(e) => { e.preventDefault(); setTab(tab === 'login' ? 'signup' : 'login'); }}>
             {tab === 'login' ? 'Sign Up' : 'Login'}
           </a>
         </p>
 
         {/* Security note */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '1.25rem', fontSize: '0.75rem', color: '#334155' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '1.25rem', fontSize: '0.75rem', color: '#45425e' }}>
           <Shield size={12} />
           <span>College email verification required for all accounts</span>
         </div>

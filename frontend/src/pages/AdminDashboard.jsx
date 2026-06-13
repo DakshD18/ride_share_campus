@@ -24,10 +24,10 @@ const injectStyles = () => {
   const s = document.createElement('style');
   s.id = 'admin-styles';
   s.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
     .admin-root * { box-sizing: border-box; margin: 0; padding: 0; }
-    .admin-root { font-family: 'Outfit', sans-serif; }
+    .admin-root { font-family: 'DM Sans', sans-serif; }
 
     @keyframes adminFadeIn {
       from { opacity: 0; transform: translateY(16px); }
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
         <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Shield size={16} color="white" />
         </div>
-        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Syne',sans-serif" }}>
+        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Space Grotesk',sans-serif" }}>
           Ride<span style={{ background: 'linear-gradient(135deg,#fbbf24,#f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Admin</span>
         </span>
       </Link>
@@ -251,7 +251,7 @@ const AdminDashboard = () => {
   const OverviewTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
           Platform Overview
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
@@ -278,7 +278,7 @@ const AdminDashboard = () => {
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `rgba(${stat.color === '#3b82f6' ? '59,130,246' : stat.color === '#10b981' ? '16,185,129' : stat.color === '#f59e0b' ? '245,158,11' : stat.color === '#ef4444' ? '239,68,68' : stat.color === '#8b5cf6' ? '139,92,246' : stat.color === '#06b6d4' ? '6,182,212' : '52,211,153'},0.15)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.65rem' }}>
               <stat.icon size={17} color={stat.color} />
             </div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", animation: 'countUp 0.5s ease', letterSpacing: '-0.02em' }}>{stat.value}</div>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", animation: 'countUp 0.5s ease', letterSpacing: '-0.02em' }}>{stat.value}</div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.1rem' }}>{stat.label}</div>
           </div>
         ))}
@@ -327,7 +327,7 @@ const AdminDashboard = () => {
   const UsersTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Users</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Users</h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>{totalUsers} registered users.</p>
       </div>
 
@@ -350,7 +350,7 @@ const AdminDashboard = () => {
               }
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{u.name || 'Unknown'}</div>
+              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{u.name || 'Unknown'}</div>
               <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{u.email}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem' }}>
@@ -383,7 +383,7 @@ const AdminDashboard = () => {
   const RidesTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Rides</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Rides</h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>{totalRides} total rides.</p>
       </div>
 
@@ -459,12 +459,12 @@ const AdminDashboard = () => {
   /* ── Loading state ── */
   if (loading) {
     return (
-      <div className="admin-root" style={{ minHeight: '100vh', background: '#020617', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="admin-root" style={{ minHeight: '100vh', background: '#06060f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: '0 8px 24px rgba(245,158,11,0.3)' }}>
             <Shield size={24} color="white" />
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif", marginBottom: '0.3rem' }}>Loading Admin Panel...</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", marginBottom: '0.3rem' }}>Loading Admin Panel...</div>
           <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Fetching platform data</div>
         </div>
       </div>
@@ -478,7 +478,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-root" style={{ minHeight: '100vh', background: '#020617' }}>
+    <div className="admin-root" style={{ minHeight: '100vh', background: '#06060f' }}>
       <Sidebar />
       <MobileNav />
       <div className="admin-main" style={{ marginLeft: '240px', minHeight: '100vh', padding: '2rem' }}>

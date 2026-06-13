@@ -34,10 +34,10 @@ const injectStyles = () => {
   const s = document.createElement('style');
   s.id = 'dd-styles';
   s.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
     .dd-root * { box-sizing: border-box; margin: 0; padding: 0; }
-    .dd-root { font-family: 'Outfit', sans-serif; }
+    .dd-root { font-family: 'DM Sans', sans-serif; }
 
     @keyframes ddFadeIn {
       from { opacity: 0; transform: translateY(16px); }
@@ -285,7 +285,7 @@ const OnlineToggle = ({ online, onToggle }) => (
         <Power size={22} color={online ? 'white' : '#475569'} />
       </div>
       <div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, color: online ? '#34d399' : '#94a3b8', fontFamily: "'Syne',sans-serif", transition: 'color 0.3s' }}>
+        <div style={{ fontSize: '1rem', fontWeight: 700, color: online ? '#34d399' : '#94a3b8', fontFamily: "'Space Grotesk',sans-serif", transition: 'color 0.3s' }}>
           {online ? 'You are Online' : 'You are Offline'}
         </div>
         <div style={{ fontSize: '0.8rem', color: online ? '#10b981' : '#475569', transition: 'color 0.3s' }}>
@@ -658,7 +658,7 @@ const DriverDashboard = () => {
         <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Car size={16} color="white" />
         </div>
-        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Syne',sans-serif" }}>
+        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Space Grotesk',sans-serif" }}>
           Ride<span style={{ background: 'linear-gradient(135deg,#34d399,#10b981)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
         </span>
       </Link>
@@ -742,7 +742,7 @@ const DriverDashboard = () => {
   const HomeTab = () => (
     <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
           Good day, {driver.name.split(' ')[0]} 👋
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
@@ -766,7 +766,7 @@ const DriverDashboard = () => {
               <stat.icon size={17} color={stat.color} />
             </div>
             <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{stat.value}</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{stat.value}</div>
               <div style={{ fontSize: '0.72rem', color: '#475569' }}>{stat.label}</div>
             </div>
           </div>
@@ -776,7 +776,7 @@ const DriverDashboard = () => {
       {/* Ride requests / Post form */}
       {!online ? (
         <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1.25rem', padding: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem', fontFamily: "'Syne',sans-serif" }}>Offer a Ride</h3>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem', fontFamily: "'Space Grotesk',sans-serif" }}>Offer a Ride</h3>
           
           <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
             <div>
@@ -837,14 +837,14 @@ const DriverDashboard = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.9rem' }}>
                   <Avatar name={req.passengerName} photo={req.photo} size={44} fontSize='0.95rem' color="blue" />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{req.passengerName}</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{req.passengerName}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Stars rating={req.rating} />
                       <span style={{ fontSize: '0.72rem', color: '#475569' }}>{req.totalRides} rides</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#10b981', fontFamily: "'Syne',sans-serif" }}>₹{req.fare}</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#10b981', fontFamily: "'Space Grotesk',sans-serif" }}>₹{req.fare}</div>
                     <div style={{ fontSize: '0.7rem', color: '#475569' }}>{req.distance}</div>
                   </div>
                 </div>
@@ -892,7 +892,7 @@ const DriverDashboard = () => {
         <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Navigation size={28} color="#10b981" />
         </div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>No Active Ride</h3>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>No Active Ride</h3>
         <p style={{ fontSize: '0.88rem', color: '#64748b', textAlign: 'center', maxWidth: '260px', lineHeight: 1.6 }}>Accept a ride request from the Home tab to get started.</p>
         <button onClick={() => setActiveTab('home')} style={{ padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg,#10b981,#059669)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           Go to Home <ArrowRight size={16} />
@@ -903,7 +903,7 @@ const DriverDashboard = () => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animation: 'ddFadeIn 0.4s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em' }}>Active Ride</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em' }}>Active Ride</h2>
           <span style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', background: 'rgba(16,185,129,0.1)', color: '#10b981', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.25)', fontWeight: 600 }}>
             {rideCompleted ? 'Completed' : otpVerified ? 'In Progress' : 'Awaiting OTP'}
           </span>
@@ -927,7 +927,7 @@ const DriverDashboard = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.85rem' }}>
             <Avatar name={activeRide.passengerName} size={48} fontSize='1rem' color="blue" />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{activeRide.passengerName}</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{activeRide.passengerName}</div>
               <Stars rating={activeRide.rating} />
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -977,7 +977,7 @@ const DriverDashboard = () => {
         {rideCompleted && (
           <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '1rem', padding: '1.1rem', textAlign: 'center' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎉</div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399', fontFamily: "'Syne',sans-serif" }}>Ride Completed!</div>
+            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399', fontFamily: "'Space Grotesk',sans-serif" }}>Ride Completed!</div>
             <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.25rem' }}>Redirecting to earnings...</div>
           </div>
         )}
@@ -988,7 +988,7 @@ const DriverDashboard = () => {
   /* EARNINGS TAB */
   const EarningsTab = () => (
     <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>Earnings</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>Earnings</h2>
       <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '1.5rem' }}>Your ride income summary.</p>
 
       {/* Big earnings cards */}
@@ -1006,7 +1006,7 @@ const DriverDashboard = () => {
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: i === 0 ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
               <card.icon size={18} color={i === 0 ? '#10b981' : '#3b82f6'} />
             </div>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', animation: 'countUp 0.5s ease' }}>{card.value}</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', animation: 'countUp 0.5s ease' }}>{card.value}</div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.15rem' }}>{card.label}</div>
             <div style={{ fontSize: '0.72rem', color: i === 0 ? '#10b981' : '#3b82f6', marginTop: '0.25rem', fontWeight: 600 }}>{card.sub}</div>
           </div>
@@ -1045,14 +1045,14 @@ const DriverDashboard = () => {
   /* PROFILE TAB */
   const ProfileTab = () => (
     <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", letterSpacing: '-0.03em', marginBottom: '1.5rem' }}>Profile</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '1.5rem' }}>Profile</h2>
 
       {/* Profile card */}
       <div style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '1rem', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
           <Avatar name={driver.name} size={72} fontSize='1.4rem' color="green" />
         </div>
-        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif", marginBottom: '0.3rem' }}>{driver.name}</h3>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", marginBottom: '0.3rem' }}>{driver.name}</h3>
         <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.75rem' }}>{driver.email}</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.85rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '999px' }}>
@@ -1075,7 +1075,7 @@ const DriverDashboard = () => {
               <Car size={22} color="#34d399" />
             </div>
             <div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{driver.vehicle}</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{driver.vehicle}</div>
               <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{driver.vehicleColor}</div>
             </div>
           </div>
@@ -1110,7 +1110,7 @@ const DriverDashboard = () => {
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem' }}>
               <stat.icon size={17} color="#10b981" />
             </div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne',sans-serif" }}>{stat.value}</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{stat.value}</div>
             <div style={{ fontSize: '0.75rem', color: '#475569' }}>{stat.label}</div>
           </div>
         ))}
@@ -1143,7 +1143,7 @@ const DriverDashboard = () => {
   };
 
   return (
-    <div className="dd-root" style={{ minHeight: '100vh', background: '#020617' }}>
+    <div className="dd-root" style={{ minHeight: '100vh', background: '#06060f' }}>
       {Sidebar()}
       {MobileNav()}
       <div className="dd-main" style={{ marginLeft: '240px', minHeight: '100vh', padding: '2rem' }}>

@@ -48,27 +48,27 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
 
       <div style={{
         width: '100%', maxWidth: '420px', margin: '0 1rem',
-        background: 'rgba(15,23,42,0.95)', backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem',
+        background: 'rgba(14,14,36,0.95)', backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.5rem',
         padding: '2rem', animation: 'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)',
         boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
       }}>
         {/* Close button */}
         <button onClick={onClose} style={{
           position: 'absolute', top: '1rem', right: '1rem',
-          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '50%', width: '32px', height: '32px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', color: '#64748b',
+          cursor: 'pointer', color: '#706d8a',
         }}><X size={16} /></button>
 
         {done ? (
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎉</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#34d399', fontFamily: "'Syne', sans-serif" }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Space Grotesk', sans-serif" }}>
               Thank you!
             </div>
-            <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.3rem' }}>
+            <div style={{ fontSize: '0.85rem', color: '#706d8a', marginTop: '0.3rem' }}>
               Your rating has been submitted.
             </div>
           </div>
@@ -76,11 +76,11 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
           <>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⭐</div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne', sans-serif", marginBottom: '0.3rem' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.3rem' }}>
                 Rate your ride
               </h3>
-              <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
-                How was your experience with <strong style={{ color: '#94a3b8' }}>{toName}</strong>?
+              <p style={{ fontSize: '0.88rem', color: '#706d8a' }}>
+                How was your experience with <strong style={{ color: '#b8b5d0' }}>{toName}</strong>?
               </p>
             </div>
 
@@ -119,8 +119,8 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
               rows={3}
               style={{
                 width: '100%', padding: '0.85rem 1rem',
-                background: 'rgba(2,6,23,0.7)', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '0.75rem', color: '#f8fafc', fontSize: '0.9rem',
+                background: 'rgba(6,6,15,0.7)', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '0.75rem', color: '#f1f0ff', fontSize: '0.9rem',
                 outline: 'none', resize: 'none', fontFamily: 'inherit',
                 marginBottom: '1.25rem',
               }}

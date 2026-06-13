@@ -9,8 +9,7 @@
 .map-view-container {
     flex: 1;
     position: relative;
-    background-color: #020617;
-    /* Deeper slate */
+    background-color: #06060f;
     background-image:
         radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 60%),
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),

@@ -53,18 +53,18 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
 
       <div style={{
         width: '100%', maxWidth: '420px', margin: '0 1rem',
-        background: 'rgba(15,23,42,0.97)', backdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1.5rem',
+        background: 'rgba(14,14,36,0.97)', backdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.5rem',
         padding: '2rem', animation: 'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)',
         boxShadow: '0 30px 70px rgba(0,0,0,0.6)', position: 'relative',
       }}>
         {/* Close */}
         <button onClick={onClose} style={{
           position: 'absolute', top: '1rem', right: '1rem',
-          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '50%', width: '32px', height: '32px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', color: '#64748b',
+          cursor: 'pointer', color: '#706d8a',
         }}><X size={16} /></button>
 
         {paid ? (
@@ -79,10 +79,10 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
             }}>
               <CheckCircle size={36} color="white" />
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#34d399', fontFamily: "'Syne', sans-serif", marginBottom: '0.4rem' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.4rem' }}>
               Payment Confirmed!
             </div>
-            <div style={{ fontSize: '0.88rem', color: '#64748b' }}>
+            <div style={{ fontSize: '0.88rem', color: '#706d8a' }}>
               ₹{fare} paid to {driverName}
             </div>
           </div>
@@ -93,16 +93,16 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{
                 width: '56px', height: '56px', borderRadius: '16px', margin: '0 auto 0.75rem',
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15))',
-                border: '1px solid rgba(139,92,246,0.2)',
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15))',
+                border: '1px solid rgba(99,102,241,0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <IndianRupee size={26} color="#a78bfa" />
               </div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Syne', sans-serif", marginBottom: '0.3rem' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.3rem' }}>
                 Ride Payment
               </h3>
-              <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
+              <p style={{ fontSize: '0.88rem', color: '#706d8a' }}>
                 {role === 'passenger' ? 'Scan the QR code to pay via UPI' : 'Confirm payment from passenger'}
               </p>
             </div>
@@ -115,7 +115,7 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.3rem' }}>
                 Amount Due
               </div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#10b981', fontFamily: "'Syne', sans-serif", letterSpacing: '-0.03em' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#22c55e', fontFamily: "'Space Grotesk', sans-serif", letterSpacing: '-0.03em' }}>
                 ₹{fare}
               </div>
               <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '0.15rem' }}>

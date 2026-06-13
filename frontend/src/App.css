@@ -1,4 +1,4 @@
-/* App specific styles removing default Vite padding */
+/* App specific styles */
 #root {
   max-width: 100%;
   margin: 0;
@@ -14,6 +14,6 @@
 
 .main-content {
   flex: 1;
-  padding-top: 80px;
-  /* Space for fixed navbar */
+  padding-top: 72px;
+  /* Space for floating navbar */
 }
