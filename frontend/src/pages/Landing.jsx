@@ -123,10 +123,10 @@ const MockRideCard = () => (
   }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
       <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#706d8a', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'var(--font-heading)' }}>Active Ride</span>
-      <span style={{ fontSize: '0.68rem', padding: '0.2rem 0.6rem', background: 'rgba(34,197,94,0.12)', color: '#22c55e', borderRadius: '999px', border: '1px solid rgba(34,197,94,0.25)', fontWeight: 600 }}> On Route </span>
+      <span style={{ fontSize: '0.68rem', padding: '0.2rem 0.6rem', background: 'rgba(34,197,94,0.12)', color: '#64ffda', borderRadius: '999px', border: '1px solid rgba(34,197,94,0.25)', fontWeight: 600 }}> On Route </span>
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-      <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #64ffda, #007bb5)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         <Car size={18} color="white" />
       </div>
       <div>
@@ -134,24 +134,24 @@ const MockRideCard = () => (
         <div style={{ fontSize: '0.72rem', color: '#706d8a' }}>Honda City · MH12 AB 1234</div>
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '2px', alignItems: 'center' }}>
-        <Star size={12} fill="#f59e0b" color="#f59e0b" />
-        <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>4.9</span>
+        <Star size={12} fill="#ffb86c" color="#ffb86c" />
+        <span style={{ fontSize: '0.75rem', color: '#ffb86c', fontWeight: 600 }}>4.9</span>
       </div>
     </div>
     <div style={{ background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: '0.75rem', padding: '0.75rem', marginBottom: '0.75rem' }}>
       <div style={{ fontSize: '0.68rem', color: '#706d8a', marginBottom: '0.3rem' }}>OTP Confirmation</div>
       <div style={{ display: 'flex', gap: '0.4rem' }}>
         {['4','7','2','1'].map((d, i) => (
-          <div key={i} style={{ width: '36px', height: '36px', background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 800, color: '#818cf8', fontFamily: 'monospace' }}>{d}</div>
+          <div key={i} style={{ width: '36px', height: '36px', background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 800, color: '#a6fff0', fontFamily: 'monospace' }}>{d}</div>
         ))}
       </div>
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
       <div style={{ position: 'relative', width: '8px', height: '8px', flexShrink: 0 }}>
-        <div className="ping-dot" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22c55e' }} />
+        <div className="ping-dot" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#64ffda' }} />
       </div>
       <div style={{ flex: 1, height: '3px', background: 'rgba(255,255,255,0.04)', borderRadius: '999px', overflow: 'hidden' }}>
-        <div style={{ width: '65%', height: '100%', background: 'linear-gradient(90deg, #6366f1, #22c55e)', borderRadius: '999px' }} />
+        <div style={{ width: '65%', height: '100%', background: 'linear-gradient(90deg, #64ffda, #64ffda)', borderRadius: '999px' }} />
       </div>
       <span style={{ fontSize: '0.72rem', color: '#706d8a' }}>2 min away</span>
     </div>
@@ -168,15 +168,15 @@ const MockRequestCard = () => (
   }}>
     <div style={{ fontSize: '0.7rem', color: '#706d8a', marginBottom: '0.5rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>Ride Request</div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem' }}>
-      <MapPin size={13} color="#f59e0b" />
+      <MapPin size={13} color="#ffb86c" />
       <span style={{ fontSize: '0.82rem', color: '#b8b5d0' }}>Main Gate → Library</span>
     </div>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-        <User size={13} color="#6366f1" />
+        <User size={13} color="#64ffda" />
         <span style={{ fontSize: '0.78rem', color: '#706d8a' }}>2 passengers</span>
       </div>
-      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b' }}>₹35</span>
+      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#ffb86c' }}>₹35</span>
     </div>
   </div>
 );
@@ -186,7 +186,7 @@ const Step = ({ num, title, desc, delay }) => (
   <div className={`reveal reveal-delay-${delay}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: 1, maxWidth: '240px' }}>
     <div style={{
       width: '56px', height: '56px', borderRadius: '16px', marginBottom: '1.25rem',
-      background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+      background: 'linear-gradient(135deg, #64ffda, #007bb5)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: '1.1rem', fontWeight: 700, color: 'white', fontFamily: 'var(--font-heading)',
       boxShadow: '0 6px 24px rgba(99,102,241,0.4)', flexShrink: 0,
@@ -222,13 +222,13 @@ const Landing = () => {
             {/* Left — Text */}
             <div style={{ flex: '1', maxWidth: '580px' }}>
               <div className="hero-delay-1" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0.9rem', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '999px', marginBottom: '1.75rem' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#6366f1', boxShadow: '0 0 8px #6366f1' }} />
-                <span style={{ fontSize: '0.78rem', color: '#818cf8', fontWeight: 600, letterSpacing: '0.04em', fontFamily: 'var(--font-heading)' }}>Campus-Only Ride Sharing</span>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64ffda', boxShadow: '0 0 8px #64ffda' }} />
+                <span style={{ fontSize: '0.78rem', color: '#a6fff0', fontWeight: 600, letterSpacing: '0.04em', fontFamily: 'var(--font-heading)' }}>Campus-Only Ride Sharing</span>
               </div>
 
               <h1 className="hero-delay-2 hero-title" style={{ fontSize: '3.8rem', fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '1.25rem', fontFamily: 'var(--font-heading)' }}>
                 Your Campus,{' '}
-                <span style={{ background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #f59e0b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                <span style={{ background: 'linear-gradient(135deg, #a6fff0 0%, #64ffda 40%, #ffb86c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   Your Ride.
                 </span>
               </h1>
@@ -240,7 +240,7 @@ const Landing = () => {
               <div className="hero-delay-4" style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap' }}>
                 <Link to="/login" className="btn-cta" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                  padding: '0.85rem 1.8rem', background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  padding: '0.85rem 1.8rem', background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
                   color: 'white', borderRadius: '0.85rem', fontWeight: 700, fontSize: '0.95rem',
                   textDecoration: 'none', boxShadow: '0 6px 24px rgba(99,102,241,0.4)',
                   letterSpacing: '-0.01em', fontFamily: 'var(--font-heading)',
@@ -260,7 +260,7 @@ const Landing = () => {
               <div className="hero-delay-5" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', flexWrap: 'wrap' }}>
                 {['Verified Students Only', 'OTP Protected', 'Free to Join'].map((t, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <CheckCircle size={14} color="#22c55e" />
+                    <CheckCircle size={14} color="#64ffda" />
                     <span style={{ fontSize: '0.82rem', color: '#706d8a', fontWeight: 500 }}>{t}</span>
                   </div>
                 ))}
@@ -277,9 +277,9 @@ const Landing = () => {
               <div className="float-card-2" style={{ position: 'absolute', bottom: '10px', right: '-20px', zIndex: 3 }}>
                 <MockRequestCard />
               </div>
-              <div style={{ position: 'absolute', top: '20px', left: '10px', width: '8px', height: '8px', borderRadius: '50%', background: '#6366f1', boxShadow: '0 0 12px rgba(99,102,241,0.6)' }} />
-              <div style={{ position: 'absolute', bottom: '50px', left: '-10px', width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 10px rgba(245,158,11,0.6)' }} />
-              <div style={{ position: 'absolute', top: '80px', right: '10px', width: '6px', height: '6px', borderRadius: '50%', background: '#8b5cf6', boxShadow: '0 0 10px rgba(139,92,246,0.6)' }} />
+              <div style={{ position: 'absolute', top: '20px', left: '10px', width: '8px', height: '8px', borderRadius: '50%', background: '#64ffda', boxShadow: '0 0 12px rgba(99,102,241,0.6)' }} />
+              <div style={{ position: 'absolute', bottom: '50px', left: '-10px', width: '5px', height: '5px', borderRadius: '50%', background: '#ffb86c', boxShadow: '0 0 10px rgba(245,158,11,0.6)' }} />
+              <div style={{ position: 'absolute', top: '80px', right: '10px', width: '6px', height: '6px', borderRadius: '50%', background: '#007bb5', boxShadow: '0 0 10px rgba(139,92,246,0.6)' }} />
             </div>
           </div>
         </div>
@@ -295,14 +295,14 @@ const Landing = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
           <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }}>
             {[
-              { val: '100%', label: 'Verified Students', icon: Shield, color: '#6366f1' },
-              { val: 'OTP', label: 'Secured Every Ride', icon: QrCode, color: '#8b5cf6' },
-              { val: 'Live', label: 'GPS Tracking', icon: MapPin, color: '#22c55e' },
-              { val: '₹0', label: 'Platform Fee', icon: Zap, color: '#f59e0b' },
-              { val: 'UPI', label: 'Instant Payments', icon: Smartphone, color: '#818cf8' },
+              { val: '100%', label: 'Verified Students', icon: Shield, color: '#64ffda' },
+              { val: 'OTP', label: 'Secured Every Ride', icon: QrCode, color: '#007bb5' },
+              { val: 'Live', label: 'GPS Tracking', icon: MapPin, color: '#64ffda' },
+              { val: '₹0', label: 'Platform Fee', icon: Zap, color: '#ffb86c' },
+              { val: 'UPI', label: 'Instant Payments', icon: Smartphone, color: '#a6fff0' },
             ].map((s, i) => (
               <div key={i} className="stat-card reveal" style={{ textAlign: 'center', padding: '1.25rem 1rem', background: 'rgba(14,14,36,0.5)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `rgba(${s.color === '#6366f1' ? '99,102,241' : s.color === '#8b5cf6' ? '139,92,246' : s.color === '#22c55e' ? '34,197,94' : s.color === '#f59e0b' ? '245,158,11' : '129,140,248'},0.1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `rgba(${s.color === '#64ffda' ? '99,102,241' : s.color === '#007bb5' ? '139,92,246' : s.color === '#64ffda' ? '34,197,94' : s.color === '#ffb86c' ? '245,158,11' : '129,140,248'},0.1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
                   <s.icon size={18} color={s.color} />
                 </div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: '#f1f0ff', letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', marginBottom: '0.15rem' }}>{s.val}</div>
@@ -318,10 +318,10 @@ const Landing = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
           <div className="reveal" style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0.85rem', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '999px', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Simple Process</span>
+              <span style={{ fontSize: '0.75rem', color: '#ffb86c', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Simple Process</span>
             </div>
             <h2 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', marginBottom: '0.75rem' }}>
-              Ready in <span style={{ background: 'linear-gradient(135deg, #818cf8, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>3 steps</span>
+              Ready in <span style={{ background: 'linear-gradient(135deg, #a6fff0, #ffb86c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>3 steps</span>
             </h2>
             <p style={{ color: '#706d8a', fontSize: '1rem', maxWidth: '460px', margin: '0 auto', lineHeight: 1.7 }}>
               No complicated setup. Just sign up, request or offer a ride, and go.
@@ -330,9 +330,9 @@ const Landing = () => {
 
           <div className="steps-row" style={{ display: 'flex', alignItems: 'flex-start', gap: '0', justifyContent: 'center' }}>
             <Step num="1" title="Verify College Email" desc="Sign up with your official college email. Instant verification keeps the platform student-only." delay="1" />
-            <div className="step-connector reveal reveal-delay-2" style={{ flex: '0 0 80px', height: '2px', background: 'linear-gradient(90deg, #6366f1, #f59e0b)', marginTop: '28px', borderRadius: '999px', opacity: 0.35 }} />
+            <div className="step-connector reveal reveal-delay-2" style={{ flex: '0 0 80px', height: '2px', background: 'linear-gradient(90deg, #64ffda, #ffb86c)', marginTop: '28px', borderRadius: '999px', opacity: 0.35 }} />
             <Step num="2" title="Book or Offer a Ride" desc="Passengers request a pickup. Drivers see requests on their dashboard and accept." delay="2" />
-            <div className="step-connector reveal reveal-delay-3" style={{ flex: '0 0 80px', height: '2px', background: 'linear-gradient(90deg, #f59e0b, #8b5cf6)', marginTop: '28px', borderRadius: '999px', opacity: 0.35 }} />
+            <div className="step-connector reveal reveal-delay-3" style={{ flex: '0 0 80px', height: '2px', background: 'linear-gradient(90deg, #ffb86c, #007bb5)', marginTop: '28px', borderRadius: '999px', opacity: 0.35 }} />
             <Step num="3" title="OTP Confirm & Ride" desc="Passenger shows OTP to driver at pickup. Ride starts only after confirmation." delay="3" />
           </div>
         </div>
@@ -343,7 +343,7 @@ const Landing = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
           <div className="reveal" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <h2 style={{ fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', marginBottom: '0.75rem' }}>
-              One platform, <span style={{ background: 'linear-gradient(135deg, #818cf8, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>two roles</span>
+              One platform, <span style={{ background: 'linear-gradient(135deg, #a6fff0, #ffb86c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>two roles</span>
             </h2>
             <p style={{ color: '#706d8a', fontSize: '1rem' }}>Whether you need a ride or want to offer one — we've got you covered.</p>
           </div>
@@ -355,9 +355,9 @@ const Landing = () => {
               border: '1px solid rgba(99,102,241,0.12)', borderRadius: '1.5rem', padding: '2.25rem',
               position: 'relative', overflow: 'hidden',
             }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #6366f1, #818cf8)' }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #64ffda, #a6fff0)' }} />
               <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <User size={26} color="#818cf8" />
+                <User size={26} color="#a6fff0" />
               </div>
               <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#f1f0ff', marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>For Passengers</h3>
               <p style={{ color: '#706d8a', fontSize: '0.9rem', lineHeight: 1.65, marginBottom: '1.5rem' }}>
@@ -365,13 +365,13 @@ const Landing = () => {
               </p>
               {['Book rides in seconds', 'See driver details & rating', 'OTP-verified pickup safety', 'Pay via UPI after the ride', 'Rate your driver'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.7rem' }}>
-                  <CheckCircle size={15} color="#6366f1" style={{ flexShrink: 0 }} />
+                  <CheckCircle size={15} color="#64ffda" style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: '0.88rem', color: '#b8b5d0' }}>{item}</span>
                 </div>
               ))}
               <Link to="/login" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem',
-                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
                 color: 'white', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.9rem',
                 textDecoration: 'none', boxShadow: '0 4px 16px rgba(99,102,241,0.35)', fontFamily: 'var(--font-heading)',
               }}>
@@ -385,9 +385,9 @@ const Landing = () => {
               border: '1px solid rgba(245,158,11,0.12)', borderRadius: '1.5rem', padding: '2.25rem',
               position: 'relative', overflow: 'hidden',
             }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #f59e0b, #fbbf24)' }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #ffb86c, #ffb86c)' }} />
               <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <Car size={26} color="#fbbf24" />
+                <Car size={26} color="#ffb86c" />
               </div>
               <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#f1f0ff', marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>For Drivers</h3>
               <p style={{ color: '#706d8a', fontSize: '0.9rem', lineHeight: 1.65, marginBottom: '1.5rem' }}>
@@ -395,13 +395,13 @@ const Landing = () => {
               </p>
               {['Set your own availability', 'Accept or decline requests', 'Verify riders with OTP', 'Receive UPI payments instantly', 'Build your reputation score'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.7rem' }}>
-                  <CheckCircle size={15} color="#f59e0b" style={{ flexShrink: 0 }} />
+                  <CheckCircle size={15} color="#ffb86c" style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: '0.88rem', color: '#b8b5d0' }}>{item}</span>
                 </div>
               ))}
               <Link to="/login" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem',
-                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg, #ffb86c, #ffb86c)',
                 color: '#0c0c1d', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.9rem',
                 textDecoration: 'none', boxShadow: '0 4px 16px rgba(245,158,11,0.35)', fontFamily: 'var(--font-heading)',
               }}>
@@ -432,7 +432,7 @@ const Landing = () => {
               </p>
               <Link to="/login" className="btn-cta" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.9rem 2rem', background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                padding: '0.9rem 2rem', background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
                 color: 'white', borderRadius: '0.85rem', fontWeight: 700, fontSize: '1rem',
                 textDecoration: 'none', boxShadow: '0 6px 24px rgba(99,102,241,0.4)', fontFamily: 'var(--font-heading)',
               }}>
@@ -450,11 +450,11 @@ const Landing = () => {
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.04)', padding: '2rem 0' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ width: '28px', height: '28px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '28px', height: '28px', background: 'linear-gradient(135deg, #64ffda, #007bb5)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Car size={14} color="white" />
             </div>
             <span style={{ fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)' }}>
-              RideShare<span style={{ background: 'linear-gradient(135deg, #818cf8, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
+              RideShare<span style={{ background: 'linear-gradient(135deg, #a6fff0, #64ffda)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
             </span>
           </div>
           <p style={{ fontSize: '0.8rem', color: '#45425e', margin: 0 }}>

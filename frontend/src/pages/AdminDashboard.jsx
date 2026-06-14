@@ -50,7 +50,7 @@ const injectStyles = () => {
       border: none; background: none; width: 100%; font-family: inherit;
     }
     .admin-nav-item:hover { background: rgba(255,255,255,0.05); color: #94a3b8; }
-    .admin-nav-item.active { background: rgba(245,158,11,0.1); color: #fbbf24; }
+    .admin-nav-item.active { background: rgba(245,158,11,0.1); color: #ffb86c; }
 
     .admin-stat-card {
       transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -82,11 +82,11 @@ const injectStyles = () => {
 const StatusBadge = ({ status }) => {
   const styles = {
     available:  { bg: 'rgba(59,130,246,0.1)', color: '#60a5fa', border: 'rgba(59,130,246,0.2)' },
-    requested:  { bg: 'rgba(245,158,11,0.1)', color: '#fbbf24', border: 'rgba(245,158,11,0.2)' },
+    requested:  { bg: 'rgba(245,158,11,0.1)', color: '#ffb86c', border: 'rgba(245,158,11,0.2)' },
     booked:     { bg: 'rgba(139,92,246,0.1)', color: '#a78bfa', border: 'rgba(139,92,246,0.2)' },
     started:    { bg: 'rgba(16,185,129,0.1)', color: '#34d399', border: 'rgba(16,185,129,0.2)' },
     in_progress:{ bg: 'rgba(16,185,129,0.1)', color: '#34d399', border: 'rgba(16,185,129,0.2)' },
-    completed:  { bg: 'rgba(16,185,129,0.08)', color: '#10b981', border: 'rgba(16,185,129,0.15)' },
+    completed:  { bg: 'rgba(16,185,129,0.08)', color: '#64ffda', border: 'rgba(16,185,129,0.15)' },
     cancelled:  { bg: 'rgba(239,68,68,0.1)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
   };
   const s = styles[status] || styles.available;
@@ -180,18 +180,18 @@ const AdminDashboard = () => {
       display: 'flex', flexDirection: 'column', zIndex: 100, padding: '1.5rem 1rem',
     }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', marginBottom: '2rem', padding: '0 0.5rem' }}>
-        <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#ffb86c,#ffb86c)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Shield size={16} color="white" />
         </div>
-        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Space Grotesk',sans-serif" }}>
-          Ride<span style={{ background: 'linear-gradient(135deg,#fbbf24,#f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Admin</span>
+        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Outfit',sans-serif" }}>
+          Ride<span style={{ background: 'linear-gradient(135deg,#ffb86c,#ffb86c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Admin</span>
         </span>
       </Link>
 
       {/* Admin badge */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: '0.65rem', marginBottom: '1.5rem' }}>
-        <Shield size={13} color="#fbbf24" />
-        <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 600 }}>Admin Panel</span>
+        <Shield size={13} color="#ffb86c" />
+        <span style={{ fontSize: '0.75rem', color: '#ffb86c', fontWeight: 600 }}>Admin Panel</span>
       </div>
 
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
@@ -208,13 +208,13 @@ const AdminDashboard = () => {
       {/* Logout */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#f59e0b,#d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, color: 'white' }}>A</div>
+          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#ffb86c,#ffb86c)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, color: 'white' }}>A</div>
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0' }}>Admin</div>
             <div style={{ fontSize: '0.72rem', color: '#475569' }}>{currentEmail}</div>
           </div>
         </div>
-        <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit' }}>
+        <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(239,68,68,0.1)', color: '#ff5555', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit' }}>
           <LogOut size={14} /> Log Out
         </button>
       </div>
@@ -233,7 +233,7 @@ const AdminDashboard = () => {
         <button key={item.id} onClick={() => setActiveTab(item.id)} style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
           background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem 1rem',
-          color: activeTab === item.id ? '#fbbf24' : '#475569',
+          color: activeTab === item.id ? '#ffb86c' : '#475569',
           fontFamily: 'inherit', fontSize: '0.65rem', fontWeight: 600,
         }}>
           <item.icon size={20} />
@@ -251,7 +251,7 @@ const AdminDashboard = () => {
   const OverviewTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Outfit',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
           Platform Overview
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
@@ -262,12 +262,12 @@ const AdminDashboard = () => {
       {/* Stats grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
         {[
-          { label: 'Total Rides', value: totalRides, icon: Car, color: '#3b82f6', gradient: 'linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.03))', border: 'rgba(59,130,246,0.15)' },
-          { label: 'Completed', value: completedRides, icon: CheckCircle, color: '#10b981', gradient: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.03))', border: 'rgba(16,185,129,0.15)' },
-          { label: 'Active Now', value: activeRides, icon: TrendingUp, color: '#f59e0b', gradient: 'linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.03))', border: 'rgba(245,158,11,0.15)' },
-          { label: 'Cancelled', value: cancelledRides, icon: XCircle, color: '#ef4444', gradient: 'linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.03))', border: 'rgba(239,68,68,0.15)' },
-          { label: 'Revenue', value: `₹${totalRevenue}`, icon: IndianRupee, color: '#10b981', gradient: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.03))', border: 'rgba(16,185,129,0.15)' },
-          { label: 'Total Users', value: totalUsers, icon: Users, color: '#8b5cf6', gradient: 'linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.03))', border: 'rgba(139,92,246,0.15)' },
+          { label: 'Total Rides', value: totalRides, icon: Car, color: '#007bb5', gradient: 'linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.03))', border: 'rgba(59,130,246,0.15)' },
+          { label: 'Completed', value: completedRides, icon: CheckCircle, color: '#64ffda', gradient: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.03))', border: 'rgba(16,185,129,0.15)' },
+          { label: 'Active Now', value: activeRides, icon: TrendingUp, color: '#ffb86c', gradient: 'linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.03))', border: 'rgba(245,158,11,0.15)' },
+          { label: 'Cancelled', value: cancelledRides, icon: XCircle, color: '#ff5555', gradient: 'linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.03))', border: 'rgba(239,68,68,0.15)' },
+          { label: 'Revenue', value: `₹${totalRevenue}`, icon: IndianRupee, color: '#64ffda', gradient: 'linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.03))', border: 'rgba(16,185,129,0.15)' },
+          { label: 'Total Users', value: totalUsers, icon: Users, color: '#33a8e5', gradient: 'linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.03))', border: 'rgba(139,92,246,0.15)' },
           { label: 'Drivers', value: drivers.length, icon: Car, color: '#06b6d4', gradient: 'linear-gradient(135deg,rgba(6,182,212,0.12),rgba(6,182,212,0.03))', border: 'rgba(6,182,212,0.15)' },
           { label: 'Payments', value: paidRides, icon: IndianRupee, color: '#34d399', gradient: 'linear-gradient(135deg,rgba(52,211,153,0.12),rgba(52,211,153,0.03))', border: 'rgba(52,211,153,0.15)' },
         ].map((stat, i) => (
@@ -275,10 +275,10 @@ const AdminDashboard = () => {
             background: stat.gradient, border: `1px solid ${stat.border}`,
             borderRadius: '1.1rem', padding: '1.1rem',
           }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `rgba(${stat.color === '#3b82f6' ? '59,130,246' : stat.color === '#10b981' ? '16,185,129' : stat.color === '#f59e0b' ? '245,158,11' : stat.color === '#ef4444' ? '239,68,68' : stat.color === '#8b5cf6' ? '139,92,246' : stat.color === '#06b6d4' ? '6,182,212' : '52,211,153'},0.15)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.65rem' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `rgba(${stat.color === '#007bb5' ? '59,130,246' : stat.color === '#64ffda' ? '16,185,129' : stat.color === '#ffb86c' ? '245,158,11' : stat.color === '#ff5555' ? '239,68,68' : stat.color === '#33a8e5' ? '139,92,246' : stat.color === '#06b6d4' ? '6,182,212' : '52,211,153'},0.15)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.65rem' }}>
               <stat.icon size={17} color={stat.color} />
             </div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", animation: 'countUp 0.5s ease', letterSpacing: '-0.02em' }}>{stat.value}</div>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Outfit',sans-serif", animation: 'countUp 0.5s ease', letterSpacing: '-0.02em' }}>{stat.value}</div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.1rem' }}>{stat.label}</div>
           </div>
         ))}
@@ -310,7 +310,7 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#10b981', marginBottom: '0.15rem' }}>₹{ride.fare || 0}</div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#64ffda', marginBottom: '0.15rem' }}>₹{ride.fare || 0}</div>
                 <StatusBadge status={ride.status} />
               </div>
             </div>
@@ -327,7 +327,7 @@ const AdminDashboard = () => {
   const UsersTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Users</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Outfit',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Users</h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>{totalUsers} registered users.</p>
       </div>
 
@@ -340,7 +340,7 @@ const AdminDashboard = () => {
             {/* Avatar */}
             <div style={{
               width: '42px', height: '42px', borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
-              background: u.photoURL ? 'transparent' : 'linear-gradient(135deg,#8b5cf6,#7c3aed)',
+              background: u.photoURL ? 'transparent' : 'linear-gradient(135deg,#33a8e5,#009ce0)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               border: '2px solid rgba(139,92,246,0.3)', fontSize: '0.9rem', fontWeight: 700, color: 'white',
             }}>
@@ -350,7 +350,7 @@ const AdminDashboard = () => {
               }
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{u.name || 'Unknown'}</div>
+              <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Outfit',sans-serif" }}>{u.name || 'Unknown'}</div>
               <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{u.email}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem' }}>
@@ -365,8 +365,8 @@ const AdminDashboard = () => {
               )}
               {u.avgRating > 0 && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                  <span style={{ fontSize: '0.78rem', color: '#f59e0b', fontWeight: 700 }}>{u.avgRating}</span>
+                  <Star size={11} fill="#ffb86c" color="#ffb86c" />
+                  <span style={{ fontSize: '0.78rem', color: '#ffb86c', fontWeight: 700 }}>{u.avgRating}</span>
                 </div>
               )}
             </div>
@@ -383,7 +383,7 @@ const AdminDashboard = () => {
   const RidesTab = () => (
     <div style={{ animation: 'adminFadeIn 0.4s ease' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Rides</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Outfit',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>All Rides</h2>
         <p style={{ fontSize: '0.88rem', color: '#64748b' }}>{totalRides} total rides.</p>
       </div>
 
@@ -412,9 +412,9 @@ const AdminDashboard = () => {
             {/* Route */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#10b981' }} />
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#64ffda' }} />
                 <div style={{ width: '1px', height: '10px', background: 'rgba(255,255,255,0.1)' }} />
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#ef4444' }} />
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#ff5555' }} />
               </div>
               <div>
                 <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>{ride.pickup || '—'}</div>
@@ -425,8 +425,8 @@ const AdminDashboard = () => {
             {/* Footer: fare, seats, type, payment */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <IndianRupee size={12} color="#10b981" />
-                <span style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: 700 }}>₹{ride.fare || 0}</span>
+                <IndianRupee size={12} color="#64ffda" />
+                <span style={{ fontSize: '0.82rem', color: '#64ffda', fontWeight: 700 }}>₹{ride.fare || 0}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <Users size={12} color="#64748b" />
@@ -435,7 +435,7 @@ const AdminDashboard = () => {
               <span style={{
                 fontSize: '0.65rem', padding: '0.15rem 0.5rem', borderRadius: '999px',
                 background: ride.type === 'offer' ? 'rgba(16,185,129,0.08)' : 'rgba(59,130,246,0.08)',
-                color: ride.type === 'offer' ? '#10b981' : '#60a5fa',
+                color: ride.type === 'offer' ? '#64ffda' : '#60a5fa',
                 border: `1px solid ${ride.type === 'offer' ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)'}`,
                 fontWeight: 600, textTransform: 'uppercase',
               }}>{ride.type || 'offer'}</span>
@@ -459,12 +459,12 @@ const AdminDashboard = () => {
   /* ── Loading state ── */
   if (loading) {
     return (
-      <div className="admin-root" style={{ minHeight: '100vh', background: '#06060f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="admin-root" style={{ minHeight: '100vh', background: '#020c1b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: '0 8px 24px rgba(245,158,11,0.3)' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg,#ffb86c,#ffb86c)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: '0 8px 24px rgba(245,158,11,0.3)' }}>
             <Shield size={24} color="white" />
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", marginBottom: '0.3rem' }}>Loading Admin Panel...</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Outfit',sans-serif", marginBottom: '0.3rem' }}>Loading Admin Panel...</div>
           <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Fetching platform data</div>
         </div>
       </div>
@@ -478,7 +478,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-root" style={{ minHeight: '100vh', background: '#06060f' }}>
+    <div className="admin-root" style={{ minHeight: '100vh', background: '#020c1b' }}>
       <Sidebar />
       <MobileNav />
       <div className="admin-main" style={{ marginLeft: '240px', minHeight: '100vh', padding: '2rem' }}>

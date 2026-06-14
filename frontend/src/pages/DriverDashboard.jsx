@@ -23,234 +23,268 @@ import {
   Car, User, MapPin, Star, Clock, Home, Navigation,
   LogOut, ChevronRight, Shield, CheckCircle, ArrowRight,
   Calendar, IndianRupee, TrendingUp, Power, X, Check,
-  Wallet, AlertCircle, Route
+  Wallet, AlertCircle, Route, Menu, ChevronDown, Sparkles, Zap
 } from 'lucide-react';
 
 /* ══════════════════════════════════════════
-   STYLES INJECTION
+   STYLES INJECTION — Premium Driver UI
 ══════════════════════════════════════════ */
 const injectStyles = () => {
-  if (document.getElementById('dd-styles')) return;
+  if (document.getElementById('dd-styles-v2')) return;
   const s = document.createElement('style');
-  s.id = 'dd-styles';
+  s.id = 'dd-styles-v2';
   s.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
     .dd-root * { box-sizing: border-box; margin: 0; padding: 0; }
-    .dd-root { font-family: 'DM Sans', sans-serif; }
-
-    @keyframes ddFadeIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes ddSlideIn {
-      from { opacity: 0; transform: translateX(30px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes onlinePulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-      50%     { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
-    }
-    @keyframes statusPing {
-      0%        { transform: scale(1); opacity: 1; }
-      75%, 100% { transform: scale(2.2); opacity: 0; }
-    }
-    @keyframes requestSlide {
-      from { opacity: 0; transform: translateY(24px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes carMove {
-      0%,100% { transform: translate(0,0); }
-      25%     { transform: translate(8px,-4px); }
-      50%     { transform: translate(16px,0px); }
-      75%     { transform: translate(8px,4px); }
-    }
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toggleSlide {
-      from { transform: translateX(0); }
-      to   { transform: translateX(28px); }
+    .dd-root {
+      font-family: 'Inter', -apple-system, sans-serif;
+      overflow: hidden; height: 100vh; width: 100vw;
+      position: relative; background: #0a0e1a;
     }
 
-    .dd-nav-item {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.75rem 1rem; border-radius: 0.75rem;
-      cursor: pointer; transition: all 0.2s; color: #64748b;
-      font-size: 0.9rem; font-weight: 500; text-decoration: none;
-      border: none; background: none; width: 100%; font-family: inherit;
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); opacity: 0.5; }
+      to { transform: translateY(0); opacity: 1; }
     }
-    .dd-nav-item:hover { background: rgba(255,255,255,0.05); color: #94a3b8; }
-    .dd-nav-item.active { background: rgba(16,185,129,0.1); color: #34d399; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes livePulse {
+      0%  { transform: scale(1); opacity: 1; }
+      75%,100% { transform: scale(2.5); opacity: 0; }
+    }
+    @keyframes searchRadar {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    @keyframes otpGlow {
+      0%,100% { box-shadow: 0 0 15px rgba(16,185,129,0.3), 0 0 0 0 rgba(16,185,129,0.2); }
+      50%     { box-shadow: 0 0 25px rgba(16,185,129,0.5), 0 0 0 6px rgba(16,185,129,0); }
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-    .dd-request-card {
-      animation: requestSlide 0.4s cubic-bezier(0.16,1,0.3,1) both;
-      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    /* Bottom Sheet — Premium Glass */
+    .dd-bottom-sheet {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(180deg, rgba(15,18,35,0.92) 0%, rgba(10,14,26,0.97) 100%);
+      backdrop-filter: blur(40px) saturate(1.8);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8);
+      border-top: 1px solid rgba(16,185,129,0.2);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 0 1.5rem 2.5rem 1.5rem;
+      z-index: 100;
+      animation: sheetSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      box-shadow: 0 -20px 60px rgba(0,0,0,0.6), 0 -2px 20px rgba(16,185,129,0.08);
+      max-height: 80vh;
+      overflow-y: auto;
     }
-    .dd-request-card:hover {
-      border-color: rgba(16,185,129,0.25) !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+    .dd-bottom-sheet::-webkit-scrollbar { display: none; }
+
+    .sheet-handle-wrap { padding: 12px 0 16px 0; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1; }
+    .sheet-handle { width: 36px; height: 4px; border-radius: 99px; background: rgba(255,255,255,0.15); }
+
+    /* Floating Header */
+    .dd-float-header {
+      position: absolute; top: 0; left: 0; right: 0;
+      padding: 1.25rem 1.5rem; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(10,14,26,0.8) 0%, transparent 100%);
+    }
+    .dd-float-header > * { pointer-events: auto; }
+
+    .glass-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); color: #e2e8f0;
+    }
+    .glass-circle:hover { background: rgba(255,255,255,0.14); transform: scale(1.05); }
+    .glass-circle:active { transform: scale(0.95); }
+
+    /* Online toggle */
+    .dd-online-toggle {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px 8px 12px; border-radius: 999px;
+      backdrop-filter: blur(12px); cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .dd-online-toggle.online {
+      background: rgba(16,185,129,0.12);
+      border-color: rgba(16,185,129,0.3);
+      box-shadow: 0 4px 20px rgba(16,185,129,0.15);
+    }
+    .dd-online-toggle.offline {
+      background: rgba(255,255,255,0.06);
     }
 
-    .dd-accept-btn {
+    /* Full page overlay */
+    .dd-overlay {
+      position: absolute; inset: 0; z-index: 200;
+      background: linear-gradient(180deg, #0a0e1a 0%, #0f1225 100%);
+      overflow-y: auto; animation: fadeInUp 0.4s ease forwards;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Menu */
+    .dd-menu {
+      position: absolute; top: 56px; left: 0; min-width: 220px;
+      background: rgba(15,18,35,0.95); backdrop-filter: blur(30px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      padding: 8px; z-index: 110;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: fadeInUp 0.2s ease;
+    }
+    .dd-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      color: #94a3b8; font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; border: none; background: none;
+      width: 100%; font-family: 'Inter', sans-serif;
+    }
+    .dd-menu-item:hover { background: rgba(16,185,129,0.08); color: #86efac; }
+
+    /* Buttons */
+    .dd-btn-accept {
+      flex: 1; padding: 10px; border-radius: 12px; font-weight: 700; cursor: pointer;
+      font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.25s; font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #10b981, #059669);
-      color: white; border: none; border-radius: 0.65rem;
-      padding: 0.65rem 1.25rem; font-weight: 700; cursor: pointer;
-      font-size: 0.85rem; font-family: inherit;
-      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-      transition: all 0.2s; box-shadow: 0 4px 12px rgba(16,185,129,0.3);
-      flex: 1;
+      color: white; border: none;
+      box-shadow: 0 4px 16px rgba(16,185,129,0.3);
     }
-    .dd-accept-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    .dd-accept-btn:active { transform: translateY(0); }
+    .dd-btn-accept:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,185,129,0.4); }
 
-    .dd-decline-btn {
-      background: rgba(239,68,68,0.08);
-      color: #f87171; border: 1px solid rgba(239,68,68,0.2);
-      border-radius: 0.65rem; padding: 0.65rem 1.25rem;
-      font-weight: 600; cursor: pointer; font-size: 0.85rem;
-      font-family: inherit;
-      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-      transition: all 0.2s; flex: 1;
+    .dd-btn-decline {
+      flex: 1; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer;
+      font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s; font-family: 'Inter', sans-serif;
+      background: rgba(239,68,68,0.06); color: #f87171;
+      border: 1px solid rgba(239,68,68,0.15);
     }
-    .dd-decline-btn:hover {
-      background: rgba(239,68,68,0.15) !important;
-      border-color: rgba(239,68,68,0.35) !important;
-      transform: translateY(-1px);
-    }
+    .dd-btn-decline:hover { background: rgba(239,68,68,0.12); }
 
-    .dd-complete-btn {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white; border: none; border-radius: 0.75rem;
-      padding: 0.9rem; font-weight: 700; cursor: pointer;
-      font-size: 0.95rem; font-family: inherit; width: 100%;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      transition: all 0.2s; box-shadow: 0 4px 20px rgba(16,185,129,0.35);
-      letter-spacing: 0.02em;
+    /* OTP Input */
+    .dd-otp-digit {
+      width: 56px; height: 68px; text-align: center;
+      background: rgba(16,185,129,0.05); border: 1.5px solid rgba(16,185,129,0.2);
+      border-radius: 14px; color: #86efac; font-size: 1.8rem; font-weight: 800;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace; outline: none;
+      transition: all 0.25s; caret-color: #10b981;
     }
-    .dd-complete-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .dd-otp-digit:focus { border-color: rgba(16,185,129,0.6); background: rgba(16,185,129,0.08); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+    .dd-otp-digit.filled { border-color: rgba(16,185,129,0.4); animation: otpGlow 3s ease infinite; }
 
-    .dd-otp-input {
-      width: 52px; height: 60px; text-align: center;
-      background: rgba(2,6,23,0.8); border: 1.5px solid rgba(255,255,255,0.08);
-      border-radius: 0.75rem; color: #f8fafc; font-size: 1.8rem;
-      font-weight: 800; font-family: monospace; outline: none;
-      transition: all 0.2s; caret-color: #10b981;
+    /* Form inputs */
+    .dd-form-input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; color: #e2e8f0; font-size: 0.95rem; font-weight: 500;
+      outline: none; transition: all 0.25s; font-family: 'Inter', sans-serif;
     }
-    .dd-otp-input:focus {
-      border-color: rgba(16,185,129,0.6) !important;
-      box-shadow: 0 0 0 3px rgba(16,185,129,0.15) !important;
-      background: rgba(2,6,23,0.95) !important;
-    }
-    .dd-otp-input.filled {
-      border-color: rgba(16,185,129,0.4);
+    .dd-form-input:focus {
+      border-color: rgba(16,185,129,0.5);
       background: rgba(16,185,129,0.05);
-      color: #34d399;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+    }
+    .dd-form-input::placeholder { color: #475569; font-weight: 400; }
+
+    /* Ride request card */
+    .dd-request-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 1.25rem; position: relative; overflow: hidden;
+      transition: all 0.3s; animation: slideIn 0.4s ease forwards;
+    }
+    .dd-request-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(16,185,129,0.4), transparent);
     }
 
-    .dd-history-row { transition: background 0.2s; }
-    .dd-history-row:hover { background: rgba(255,255,255,0.03) !important; }
-
-    .online-toggle-thumb {
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    /* Radar animation */
+    .radar-ring {
+      position: absolute; border-radius: 50%;
+      border: 2px solid rgba(16,185,129,0.3);
+      animation: searchRadar 2s ease-out infinite;
     }
+    .radar-ring:nth-child(2) { animation-delay: 0.66s; }
+    .radar-ring:nth-child(3) { animation-delay: 1.33s; }
 
-    .status-ping::after {
-      content: '';
-      position: absolute; inset: 0; border-radius: 50%;
-      background: inherit;
-      animation: statusPing 1.5s cubic-bezier(0,0,0.2,1) infinite;
-    }
-
-    .earning-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(16,185,129,0.25) !important;
-    }
-    .earning-card { transition: all 0.25s; }
-
-    @media (max-width: 768px) {
-      .dd-sidebar { display: none !important; }
-      .dd-mobile-nav { display: flex !important; }
-      .dd-main { margin-left: 0 !important; padding-bottom: 80px !important; }
+    .live-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+    .live-dot::after {
+      content: ''; position: absolute; inset: -2px; border-radius: 50%;
+      background: #22c55e; animation: livePulse 1.8s cubic-bezier(0,0,0.2,1) infinite;
     }
   `;
   document.head.appendChild(s);
 };
 
 /* ══════════════════════════════════════════
-   MOCK DATA (fallback when Firestore is empty)
+   MOCK DATA
 ══════════════════════════════════════════ */
-const MOCK_REQUESTS = []; // Real data comes from Firestore listener
-
 const MOCK_EARNINGS = [
   { id: 1, passenger: 'Arjun Singh', from: 'Library', to: 'Hostel A', date: 'Today, 2:30 PM', fare: 45 },
   { id: 2, passenger: 'Meera Joshi', from: 'Admin Block', to: 'Canteen', date: 'Today, 11:15 AM', fare: 30 },
   { id: 3, passenger: 'Dev Khanna', from: 'Main Gate', to: 'Sports Ground', date: 'Yesterday', fare: 55 },
-  { id: 4, passenger: 'Priya Nair', from: 'Lab Complex', to: 'Hostel B', date: 'Yesterday', fare: 38 },
 ];
 
 /* ══════════════════════════════════════════
    SMALL COMPONENTS
 ══════════════════════════════════════════ */
-
-const Avatar = ({ name, photo, size = 40, fontSize = '1rem', color = 'blue' }) => (
+const Avatar = ({ name, photo, size = 40, fontSize = '0.9rem' }) => (
   <div style={{
-    width: size, height: size, borderRadius: '50%', flexShrink: 0,
-    background: photo ? 'transparent'
-      : color === 'green'
-        ? 'linear-gradient(135deg, #10b981, #059669)'
-        : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+    width: size, height: size, borderRadius: '14px', flexShrink: 0,
+    background: photo ? 'transparent' : 'linear-gradient(135deg, #10b981, #059669)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     fontSize, fontWeight: 700, color: 'white', overflow: 'hidden',
-    border: `2px solid ${color === 'green' ? 'rgba(16,185,129,0.3)' : 'rgba(59,130,246,0.3)'}`,
+    boxShadow: '0 4px 12px rgba(16,185,129,0.3)',
   }}>
-    {photo
-      ? <img src={photo} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      : name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-    }
+    {photo ? <img src={photo} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
   </div>
 );
 
 const Stars = ({ rating }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-    <Star size={12} fill="#f59e0b" color="#f59e0b" />
-    <span style={{ fontSize: '0.82rem', color: '#f59e0b', fontWeight: 700 }}>{rating}</span>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+    {[1,2,3,4,5].map(i => <Star key={i} size={11} fill={i <= Math.round(rating) ? '#fbbf24' : 'transparent'} color={i <= Math.round(rating) ? '#fbbf24' : '#334155'} />)}
+    <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600, marginLeft: '2px' }}>{rating}</span>
   </div>
 );
 
-/* ── MapPlaceholder replaced by real Google Map (RideMap component) ──── */
-
-/* Ride status — green tinted */
 const RideStatus = ({ step }) => {
   const steps = ['OTP Verified', 'Ride Started', 'On Route', 'Completed'];
   return (
-    <div style={{ padding: '1rem', background: 'rgba(15,23,42,0.4)', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-        <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ride Status</span>
-        <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>{steps[step]}</span>
+    <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Ride Status</span>
+        <span style={{ fontSize: '0.75rem', color: '#86efac', fontWeight: 700, padding: '3px 10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px' }}>{steps[step]}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         {steps.map((s, i) => (
           <React.Fragment key={i}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
               <div style={{
-                width: '24px', height: '24px', borderRadius: '50%', flexShrink: 0,
+                width: '28px', height: '28px', borderRadius: '50%',
                 background: i <= step ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.05)',
                 border: i <= step ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: i <= step ? '0 0 8px rgba(16,185,129,0.4)' : 'none',
+                boxShadow: i <= step ? '0 4px 12px rgba(16,185,129,0.4)' : 'none',
+                transition: 'all 0.3s',
               }}>
-                {i <= step
-                  ? <CheckCircle size={12} color="white" />
-                  : <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
-                }
+                {i <= step ? <CheckCircle size={13} color="white" /> : <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />}
               </div>
-              <span style={{ fontSize: '0.58rem', color: i <= step ? '#34d399' : '#334155', textAlign: 'center', maxWidth: '48px', lineHeight: 1.3 }}>{s}</span>
+              <span style={{ fontSize: '0.58rem', color: i <= step ? '#86efac' : '#475569', textAlign: 'center', fontWeight: i <= step ? 600 : 400, maxWidth: '48px' }}>{s}</span>
             </div>
-            {i < steps.length - 1 && (
-              <div style={{ flex: 1, height: '2px', background: i < step ? 'linear-gradient(90deg,#10b981,#34d399)' : 'rgba(255,255,255,0.05)', marginBottom: '1.2rem' }} />
-            )}
+            {i < steps.length - 1 && <div style={{ flex: 1, height: '2px', background: i < step ? 'linear-gradient(90deg, #10b981, #34d399)' : 'rgba(255,255,255,0.05)', marginBottom: '20px', borderRadius: '2px' }} />}
           </React.Fragment>
         ))}
       </div>
@@ -258,68 +292,9 @@ const RideStatus = ({ step }) => {
   );
 };
 
-/* Online / Offline toggle */
-const OnlineToggle = ({ online, onToggle }) => (
-  <div
-    onClick={onToggle}
-    style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '1.25rem 1.5rem', borderRadius: '1.25rem', cursor: 'pointer',
-      background: online ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.03)',
-      border: `1.5px solid ${online ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.07)'}`,
-      transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-      boxShadow: online ? '0 0 30px rgba(16,185,129,0.1)' : 'none',
-      animation: online ? 'onlinePulse 2.5s infinite' : 'none',
-    }}
-  >
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      {/* Power icon */}
-      <div style={{
-        width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0,
-        background: online ? 'linear-gradient(135deg,#10b981,#059669)' : 'rgba(255,255,255,0.05)',
-        border: online ? 'none' : '1px solid rgba(255,255,255,0.08)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: online ? '0 6px 16px rgba(16,185,129,0.4)' : 'none',
-        transition: 'all 0.3s',
-      }}>
-        <Power size={22} color={online ? 'white' : '#475569'} />
-      </div>
-      <div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, color: online ? '#34d399' : '#94a3b8', fontFamily: "'Space Grotesk',sans-serif", transition: 'color 0.3s' }}>
-          {online ? 'You are Online' : 'You are Offline'}
-        </div>
-        <div style={{ fontSize: '0.8rem', color: online ? '#10b981' : '#475569', transition: 'color 0.3s' }}>
-          {online ? 'Accepting ride requests' : 'Tap to go online'}
-        </div>
-      </div>
-    </div>
-    {/* Toggle switch */}
-    <div style={{
-      width: '52px', height: '28px', borderRadius: '999px',
-      background: online ? 'linear-gradient(135deg,#10b981,#059669)' : 'rgba(255,255,255,0.1)',
-      position: 'relative', transition: 'background 0.3s', flexShrink: 0,
-      boxShadow: online ? '0 0 10px rgba(16,185,129,0.4)' : 'none',
-    }}>
-      <div className="online-toggle-thumb" style={{
-        position: 'absolute', top: '3px', left: '3px',
-        width: '22px', height: '22px', borderRadius: '50%',
-        background: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-        transform: online ? 'translateX(24px)' : 'translateX(0)',
-      }} />
-    </div>
-  </div>
-);
-
-/* OTP Entry */
 const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) => {
   const inputs = useRef([]);
-
-  const handleKey = (e, i) => {
-    if (e.key === 'Backspace' && !e.target.value && i > 0) {
-      inputs.current[i - 1]?.focus();
-    }
-  };
-
+  const handleKey = (e, i) => { if (e.key === 'Backspace' && !e.target.value && i > 0) inputs.current[i - 1]?.focus(); };
   const handleInput = (e, i) => {
     const val = e.target.value.replace(/\D/g, '').slice(-1);
     const newOtp = value.padEnd(4, ' ').split('');
@@ -327,44 +302,31 @@ const OTPEntry = ({ value, onChange, onVerify, verified, verifying = false }) =>
     onChange(newOtp.join(''));
     if (val && i < 3) inputs.current[i + 1]?.focus();
   };
-
   const isFull = value.replace(/\s/g, '').length === 4;
 
   return (
-    <div style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '1rem', padding: '1.25rem' }}>
-      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem', textAlign: 'center' }}>
-        {verified ? '✅ OTP Verified — Ride Started!' : verifying ? '⏳ Verifying with server...' : 'Enter Passenger OTP to Start Ride'}
+    <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.04))', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '20px', padding: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '1rem' }}>
+        <Shield size={14} color="#86efac" />
+        <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          {verified ? '✅ OTP Verified' : verifying ? '⏳ Verifying...' : 'Enter Passenger OTP'}
+        </span>
       </div>
-      <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginBottom: '0.85rem' }}>
+      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '1rem' }}>
         {[0, 1, 2, 3].map(i => (
-          <input
-            key={i}
-            ref={el => inputs.current[i] = el}
-            className={`dd-otp-input ${value[i] ? 'filled' : ''}`}
-            type="text" inputMode="numeric"
-            maxLength={1} value={value[i]?.trim() || ''}
-            onChange={e => handleInput(e, i)}
-            onKeyDown={e => handleKey(e, i)}
-            disabled={verified || verifying}
-          />
+          <input key={i} ref={el => inputs.current[i] = el} className={`dd-otp-digit ${value[i] && value[i] !== ' ' ? 'filled' : ''}`}
+            type="text" inputMode="numeric" maxLength={1} value={value[i]?.trim() || ''} onChange={e => handleInput(e, i)} onKeyDown={e => handleKey(e, i)} disabled={verified || verifying} />
         ))}
       </div>
       {!verified && (
-        <button
-          onClick={onVerify}
-          disabled={!isFull || verifying}
-          style={{
-            width: '100%', padding: '0.75rem', borderRadius: '0.75rem',
-            background: isFull && !verifying
-              ? 'linear-gradient(135deg,#10b981,#059669)'
-              : 'rgba(255,255,255,0.05)',
-            color: isFull && !verifying ? 'white' : '#334155',
-            border: 'none', cursor: isFull && !verifying ? 'pointer' : 'not-allowed',
-            fontWeight: 700, fontSize: '0.9rem', fontFamily: 'inherit',
-            transition: 'all 0.2s', opacity: verifying ? 0.7 : 1,
-            boxShadow: isFull && !verifying ? '0 4px 14px rgba(16,185,129,0.35)' : 'none',
-          }}
-        >
+        <button onClick={onVerify} disabled={!isFull || verifying} style={{
+          width: '100%', padding: '12px', borderRadius: '14px',
+          background: isFull && !verifying ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.05)',
+          color: isFull && !verifying ? 'white' : '#475569', border: 'none',
+          cursor: isFull && !verifying ? 'pointer' : 'not-allowed', fontWeight: 700, fontSize: '0.9rem',
+          transition: 'all 0.2s', boxShadow: isFull && !verifying ? '0 6px 20px rgba(16,185,129,0.35)' : 'none',
+          fontFamily: 'Inter, sans-serif',
+        }}>
           {verifying ? 'Verifying...' : isFull ? 'Verify & Start Ride' : 'Enter all 4 digits'}
         </button>
       )}
@@ -388,783 +350,408 @@ const DriverDashboard = () => {
   const [otpValue, setOtpValue] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [rideCompleted, setRideCompleted] = useState(false);
-  const [otpVerifying, setOtpVerifying] = useState(false); // loading during API call
-  const [otpErrMsg, setOtpErrMsg] = useState('');          // inline error instead of alert
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [otpErrMsg, setOtpErrMsg] = useState('');
   const [rideHistory, setRideHistory] = useState([]);
-
-  // Ride posting state
+  const [showMenu, setShowMenu] = useState(false);
   const [postPickup, setPostPickup] = useState('PCCOE Gate #1');
   const [postDestination, setPostDestination] = useState('Akurdi Station');
   const [postFare, setPostFare] = useState('20');
   const [postSeats, setPostSeats] = useState('3');
-  const [postTime, setPostTime] = useState('Now');
   const [postingRide, setPostingRide] = useState(false);
-
-  // Payment modal state
   const [showPayment, setShowPayment] = useState(false);
   const [completedRideData, setCompletedRideData] = useState(null);
   const [upiId, setUpiId] = useState(localStorage.getItem('driverUpiId') || '');
   const prevRequestCountRef = useRef(0);
 
-  // Pull real driver info from localStorage (set during Firebase login)
   const driver = {
-    name:         localStorage.getItem('userName')  || 'Driver',
-    email:        localStorage.getItem('userEmail') || '',
-    uid:          localStorage.getItem('userUID')   || '',
-    vehicle:      'Honda City',
-    vehicleNo:    'MH 12 AB 1234',
-    vehicleColor: 'White',
-    rating:       4.9,
-    totalRides:   234,
-    memberSince:  'Sep 2024',
+    name: localStorage.getItem('userName') || 'Driver',
+    email: localStorage.getItem('userEmail') || '',
+    uid: localStorage.getItem('userUID') || '',
+    vehicle: 'Honda City', vehicleNo: 'MH 12 AB 1234', vehicleColor: 'White',
+    rating: 4.9, totalRides: 234, memberSince: 'Sep 2024',
   };
 
-  // ── Listen to Firestore for booked rides assigned to this driver ──
+  /* ── Firestore listeners ── */
   useEffect(() => {
     if (!driver.uid) return;
     const unsub = listenToDriverRides(driver.uid, (rides) => {
-      // Find active ride (started / in_progress)
       const active = rides.find(r => r.status === 'started' || r.status === 'in_progress');
       if (active && !activeRide) {
-        setActiveRide({
-          id: active.id,
-          rideId: active.id,
-          passengerName: active.passengerName || 'Passenger',
-          rating: 4.5,
-          from: active.pickup,
-          to: active.destination,
-          fare: active.fare || 0,
-          pickupCoords: active.pickupCoords,
-          dropCoords: active.destCoords,
-        });
-        setOtpVerified(true);
-        setRideStep(1);
+        setActiveRide({ id: active.id, rideId: active.id, passengerName: active.passengerName || 'Passenger', rating: 4.5, from: active.pickup, to: active.destination, fare: active.fare || 0, pickupCoords: active.pickupCoords, dropCoords: active.destCoords });
+        setOtpVerified(true); setRideStep(1);
       }
     });
     return () => unsub();
   }, [driver.uid]);
 
-  // ── Listen for incoming passenger ride requests ──
   useEffect(() => {
-    if (!online) {
-      setRequests([]);
-      return;
-    }
+    if (!online) { setRequests([]); return; }
     const unsub = listenToRideRequests((rides) => {
-      const mapped = rides.map(r => ({
-        id: r.id,
-        rideId: r.id,
-        passengerName: r.passengerName || 'Passenger',
-        rating: 4.5,
-        totalRides: 0,
-        from: r.pickup,
-        to: r.destination,
-        distance: '',
-        fare: r.fare || 0,
-        requestedAt: 'Just now',
-        photo: null,
-        pickupCoords: r.pickupCoords,
-        dropCoords: r.destCoords,
-      }));
-      // Notify on new requests
-      if (mapped.length > prevRequestCountRef.current) {
-        const newest = mapped[0];
-        notify('🙋 New Ride Request!', `${newest?.passengerName || 'A passenger'} is looking for a ride.`);
-      }
+      const mapped = rides.map(r => ({ id: r.id, rideId: r.id, passengerName: r.passengerName || 'Passenger', rating: 4.5, totalRides: 0, from: r.pickup, to: r.destination, distance: '', fare: r.fare || 0, requestedAt: 'Just now', photo: null, pickupCoords: r.pickupCoords, dropCoords: r.destCoords }));
+      if (mapped.length > prevRequestCountRef.current) notify('🙋 New Ride Request!', `${mapped[0]?.passengerName || 'A passenger'} is looking for a ride.`);
       prevRequestCountRef.current = mapped.length;
       setRequests(mapped);
     });
     return () => unsub();
   }, [online]);
 
-  // ── Fetch ride history ──
   useEffect(() => {
     if (!driver.uid) return;
     fetchRideHistory(driver.uid, 'driver').then(setRideHistory).catch(console.error);
   }, [driver.uid, rideCompleted]);
 
-  // Earnings from history
-  const todayEarnings = rideHistory
-    .filter(r => r.status === 'completed')
-    .reduce((sum, r) => sum + (r.fare || 0), 0);
-  const weekEarnings = todayEarnings; // simplified for now
+  const todayEarnings = rideHistory.filter(r => r.status === 'completed').reduce((sum, r) => sum + (r.fare || 0), 0);
 
+  /* ── Handlers ── */
   const handlePostRide = async () => {
-    if (!postPickup || !postDestination) {
-      alert("Please enter pickup and destination");
-      return;
-    }
+    if (!postPickup || !postDestination) return alert("Please enter pickup and destination");
     setPostingRide(true);
-    try {
-      await postRide({
-        driverId: driver.uid,
-        driverName: driver.name,
-        pickup: postPickup,
-        destination: postDestination,
-        time: postTime,
-        seats: parseInt(postSeats),
-        fare: parseInt(postFare)
-      });
-      setOnline(true);
-    } catch (err) {
-      console.error(err);
-      alert("Error posting ride: " + err.message);
-    } finally {
-      setPostingRide(false);
-    }
+    try { await postRide({ driverId: driver.uid, driverName: driver.name, pickup: postPickup, destination: postDestination, time: 'Now', seats: parseInt(postSeats), fare: parseInt(postFare) }); setOnline(true); }
+    catch (err) { alert("Error posting ride: " + err.message); }
+    finally { setPostingRide(false); }
   };
 
   const handleAccept = async (request) => {
-    try {
-      await acceptRideRequest(request.rideId || request.id, driver.uid, driver.name);
-      setActiveRide(request);
-      setActiveTab('active');
-      setRideStep(0);
-      setOtpValue('');
-      setOtpVerified(false);
-      setRideCompleted(false);
-      setRequests(prev => prev.filter(r => r.id !== request.id));
-    } catch (err) {
-      console.error('Error accepting ride request:', err);
-      alert('Failed to accept ride request. Please try again.');
-    }
+    try { await acceptRideRequest(request.rideId || request.id, driver.uid, driver.name); setActiveRide(request); setRideStep(0); setOtpValue(''); setOtpVerified(false); setRideCompleted(false); setRequests(prev => prev.filter(r => r.id !== request.id)); }
+    catch { alert('Failed to accept ride request.'); }
   };
 
   const handleDecline = async (id) => {
-    try {
-      await declineRideRequest(id);
-      setRequests(prev => prev.filter(r => r.id !== id));
-    } catch (err) {
-      console.error('Error declining ride request:', err);
-      setRequests(prev => prev.filter(r => r.id !== id));
-    }
+    try { await declineRideRequest(id); } catch {} setRequests(prev => prev.filter(r => r.id !== id));
   };
 
   const handleVerifyOTP = async () => {
-    setOtpErrMsg('');
-    setOtpVerifying(true);
-
+    setOtpErrMsg(''); setOtpVerifying(true);
     const rideId = activeRide?.rideId || activeRide?.id;
-
-    // Verify OTP against Firestore
     const result = await verifyRideOTP(rideId, otpValue);
-
     setOtpVerifying(false);
-
-    if (result.success) {
-      setOtpVerified(true);
-      setRideStep(1);
-      // Start GPS tracking
-      startLocationTracking(rideId);
-      // Auto-advance ride status
-      let step = 1;
-      const interval = setInterval(() => {
-        step++;
-        setRideStep(step);
-        if (step >= 2) clearInterval(interval);
-      }, 4000);
-    } else {
-      setOtpErrMsg(result.error || 'Incorrect OTP. Ask the passenger to check their app.');
-    }
+    if (result.success) { setOtpVerified(true); setRideStep(1); startLocationTracking(rideId); let step = 1; const interval = setInterval(() => { step++; setRideStep(step); if (step >= 2) clearInterval(interval); }, 4000); }
+    else setOtpErrMsg(result.error || 'Incorrect OTP.');
   };
 
-  // ── GPS tracking: update driver location to Firestore ──
   const watchIdRef = useRef(null);
   const startLocationTracking = useCallback((rideId) => {
     if (!navigator.geolocation) return;
     watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        updateDriverLocation(rideId, pos.coords.latitude, pos.coords.longitude).catch(console.error);
-      },
-      (err) => console.warn('GPS error:', err),
-      { enableHighAccuracy: true, maximumAge: 3000 }
+      (pos) => updateDriverLocation(rideId, pos.coords.latitude, pos.coords.longitude).catch(console.error),
+      (err) => console.warn('GPS error:', err), { enableHighAccuracy: true, maximumAge: 3000 }
     );
   }, []);
 
   const stopLocationTracking = useCallback(() => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
+    if (watchIdRef.current !== null) { navigator.geolocation.clearWatch(watchIdRef.current); watchIdRef.current = null; }
   }, []);
 
   const handleCompleteRide = async () => {
     const rideId = activeRide?.rideId || activeRide?.id;
-    if (rideId) {
-      await updateRideStatus(rideId, 'completed').catch(console.error);
-    }
-    stopLocationTracking();
-    setRideCompleted(true);
-    setRideStep(3);
+    if (rideId) await updateRideStatus(rideId, 'completed').catch(console.error);
+    stopLocationTracking(); setRideCompleted(true); setRideStep(3);
     notify('✅ Ride Completed!', `Ride with ${activeRide?.passengerName || 'passenger'} is done.`);
-    // Store ride data for rating before clearing
     setCompletedRideData({ ...activeRide });
-    // Show payment confirmation after a delay
-    setTimeout(() => {
-      setShowPayment(true);
-    }, 2000);
+    setTimeout(() => setShowPayment(true), 2000);
   };
 
   const handlePaymentConfirmed = async () => {
     const rideId = completedRideData?.rideId || completedRideData?.id;
-    if (rideId) {
-      await confirmPayment(rideId).catch(console.error);
-    }
-    setShowPayment(false);
-    // Go to earnings after payment
-    setActiveRide(null);
-    setActiveTab('earnings');
-    setOnline(true);
-    setCompletedRideData(null);
+    if (rideId) await confirmPayment(rideId).catch(console.error);
+    setShowPayment(false); setActiveRide(null); setActiveTab('earnings'); setOnline(true); setCompletedRideData(null);
   };
 
-  const handleSaveUpi = async () => {
-    if (!upiId.trim()) return;
-    try {
-      await setDriverUpi(driver.uid, upiId.trim());
-      localStorage.setItem('driverUpiId', upiId.trim());
-      alert('UPI ID saved successfully!');
-    } catch (err) {
-      console.error('Error saving UPI:', err);
-    }
-  };
+  const handleLogout = async () => { try { await signOut(auth); localStorage.clear(); navigate('/'); } catch {} };
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.clear();
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  const navItems = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'active', icon: Navigation, label: 'Active Ride' },
-    { id: 'earnings', icon: Wallet, label: 'Earnings' },
-    { id: 'profile', icon: User, label: 'Profile' },
-  ];
-
-  /* ── Sidebar ── */
-  const Sidebar = () => (
-    <div className="dd-sidebar" style={{
-      position: 'fixed', top: 0, left: 0, width: '240px', height: '100vh',
-      background: 'rgba(6,26,16,0.97)', backdropFilter: 'blur(20px)',
-      borderRight: '1px solid rgba(16,185,129,0.08)',
-      display: 'flex', flexDirection: 'column', zIndex: 100, padding: '1.5rem 1rem',
-    }}>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', marginBottom: '2rem', padding: '0 0.5rem' }}>
-        <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Car size={16} color="white" />
+  /* ── Full Screen Overlays ── */
+  const renderOverlay = () => {
+    if (activeTab === 'home') return null;
+    return (
+      <div className="dd-overlay">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '2rem' }}>
+          <button onClick={() => setActiveTab('home')} className="glass-circle"><ArrowRight size={18} style={{ transform: 'rotate(180deg)' }} /></button>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.02em' }}>{activeTab === 'earnings' ? 'Earnings' : 'Your Profile'}</h2>
         </div>
-        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.03em', fontFamily: "'Space Grotesk',sans-serif" }}>
-          Ride<span style={{ background: 'linear-gradient(135deg,#34d399,#10b981)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
-        </span>
-      </Link>
 
-      {/* Driver mode badge */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '0.65rem', marginBottom: '1.5rem' }}>
-        <Car size={13} color="#34d399" />
-        <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>Driver Mode</span>
-        {/* Live status dot */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: online ? '#10b981' : '#475569', boxShadow: online ? '0 0 5px #10b981' : 'none', transition: 'all 0.3s' }} />
-          <span style={{ fontSize: '0.65rem', color: online ? '#10b981' : '#475569', fontWeight: 600, transition: 'color 0.3s' }}>{online ? 'ONLINE' : 'OFFLINE'}</span>
-        </div>
-      </div>
-
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
-        {navItems.map(item => (
-          <button key={item.id}
-            className={`dd-nav-item ${activeTab === item.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(item.id)}>
-            <item.icon size={18} />
-            {item.label}
-            {item.id === 'active' && activeRide && (
-              <div style={{ marginLeft: 'auto', width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
-            )}
-            {item.id === 'home' && online && requests.length > 0 && (
-              <div style={{ marginLeft: 'auto', background: '#ef4444', color: 'white', borderRadius: '999px', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700 }}>{requests.length}</div>
-            )}
-          </button>
-        ))}
-      </nav>
-
-      {/* User info */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <Avatar name={driver.name} size={36} fontSize='0.85rem' color="green" />
+        {activeTab === 'earnings' && (
           <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e2e8f0' }}>{driver.name}</div>
-            <Stars rating={driver.rating} />
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Link to="/role-select" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(255,255,255,0.03)', color: '#475569', fontSize: '0.75rem', textDecoration: 'none', transition: 'all 0.2s' }}>
-            <User size={14} /> Switch Role
-          </Link>
-          <button onClick={handleLogout} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.6rem 0.5rem', borderRadius: '0.6rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s' }}>
-            <LogOut size={14} /> Log Out
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── Mobile Nav ── */
-  const MobileNav = () => (
-    <div className="dd-mobile-nav" style={{
-      display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0,
-      background: 'rgba(6,26,16,0.97)', backdropFilter: 'blur(20px)',
-      borderTop: '1px solid rgba(16,185,129,0.08)',
-      padding: '0.5rem 0', zIndex: 100, justifyContent: 'space-around',
-    }}>
-      {navItems.map(item => (
-        <button key={item.id} onClick={() => setActiveTab(item.id)} style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
-          background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem 1rem',
-          color: activeTab === item.id ? '#34d399' : '#475569',
-          fontFamily: 'inherit', fontSize: '0.65rem', fontWeight: 600,
-        }}>
-          <item.icon size={20} />
-          {item.label}
-        </button>
-      ))}
-    </div>
-  );
-
-  /* ══════════════════════════════
-     TAB CONTENTS
-  ══════════════════════════════ */
-
-  /* HOME TAB */
-  const HomeTab = () => (
-    <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>
-          Good day, {driver.name.split(' ')[0]} 👋
-        </h2>
-        <p style={{ fontSize: '0.88rem', color: '#64748b' }}>
-          {online ? `${requests.length} ride request${requests.length !== 1 ? 's' : ''} waiting.` : 'Go online to start accepting rides.'}
-        </p>
-      </div>
-
-      {/* Online toggle */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <OnlineToggle online={online} onToggle={() => setOnline(!online)} />
-      </div>
-
-      {/* Quick stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        {[
-          { label: "Today's Earnings", value: `₹${todayEarnings}`, icon: IndianRupee, color: '#10b981' },
-          { label: 'Rides Today', value: MOCK_EARNINGS.filter(e => e.date.startsWith('Today')).length, icon: Car, color: '#3b82f6' },
-        ].map((stat, i) => (
-          <div key={i} style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `rgba(${i === 0 ? '16,185,129' : '59,130,246'},0.1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <stat.icon size={17} color={stat.color} />
-            </div>
-            <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{stat.value}</div>
-              <div style={{ fontSize: '0.72rem', color: '#475569' }}>{stat.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Ride requests / Post form */}
-      {!online ? (
-        <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1.25rem', padding: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem', fontFamily: "'Space Grotesk',sans-serif" }}>Offer a Ride</h3>
-          
-          <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Leaving from</label>
-              <input type="text" value={postPickup} onChange={e => setPostPickup(e.target.value)}
-                style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
-            </div>
-            <div>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Going to</label>
-              <input type="text" value={postDestination} onChange={e => setPostDestination(e.target.value)}
-                style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Fare (₹)</label>
-                <input type="number" value={postFare} onChange={e => setPostFare(e.target.value)}
-                  style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+            {/* Earnings summary cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '2rem' }}>
+              <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.06))', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '20px', padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(16,185,129,0.08)' }} />
+                <div style={{ fontSize: '0.72rem', color: '#86efac', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Today</div>
+                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#f1f5f9' }}>₹{todayEarnings}</div>
               </div>
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.3rem', display: 'block' }}>Available Seats</label>
-                <input type="number" value={postSeats} onChange={e => setPostSeats(e.target.value)}
-                  style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none' }} />
+              <div style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.06))', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '20px', padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(99,102,241,0.08)' }} />
+                <div style={{ fontSize: '0.72rem', color: '#a5b4fc', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>Rides</div>
+                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#f1f5f9' }}>{rideHistory.length}</div>
               </div>
             </div>
-          </div>
-          
-          <button 
-            onClick={handlePostRide} 
-            disabled={postingRide}
-            style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '0.75rem', padding: '0.85rem', fontWeight: 700, cursor: postingRide ? 'not-allowed' : 'pointer', opacity: postingRide ? 0.7 : 1, transition: 'all 0.2s', boxShadow: '0 4px 14px rgba(16,185,129,0.3)' }}
-          >
-            {postingRide ? 'Posting...' : 'Go Online & Offer Ride'}
-          </button>
-        </div>
-      ) : requests.length === 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '3rem 1rem', gap: '1rem', background: 'rgba(15,23,42,0.3)', borderRadius: '1.25rem', border: '1px dashed rgba(16,185,129,0.1)' }}>
-          <div style={{ position: 'relative', width: '10px', height: '10px' }}>
-            <div className="status-ping" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#10b981' }} />
-          </div>
-          <p style={{ fontSize: '0.88rem', color: '#475569', textAlign: 'center' }}>
-            You're online. Waiting for ride requests...
-          </p>
-        </div>
-      ) : (
-        <div>
-          <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.75rem' }}>
-            Incoming Requests ({requests.length})
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {requests.map((req, idx) => (
-              <div key={req.id} className="dd-request-card"
-                style={{
-                  background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1.1rem',
-                  padding: '1.1rem', animationDelay: `${idx * 0.1}s`,
-                }}>
-                {/* Passenger info */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.9rem' }}>
-                  <Avatar name={req.passengerName} photo={req.photo} size={44} fontSize='0.95rem' color="blue" />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{req.passengerName}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Stars rating={req.rating} />
-                      <span style={{ fontSize: '0.72rem', color: '#475569' }}>{req.totalRides} rides</span>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#10b981', fontFamily: "'Space Grotesk',sans-serif" }}>₹{req.fare}</div>
-                    <div style={{ fontSize: '0.7rem', color: '#475569' }}>{req.distance}</div>
+            
+            <h3 style={{ fontSize: '1rem', color: '#94a3b8', fontWeight: 700, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.8rem' }}>Recent Trips</h3>
+            {MOCK_EARNINGS.map((ride, i) => (
+              <div key={ride.id} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '16px', padding: '1rem', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.06)', animation: `slideIn ${0.3 + i * 0.1}s ease forwards` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Avatar name={ride.passenger} size={38} fontSize="0.78rem" />
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#e2e8f0', fontSize: '0.9rem' }}>{ride.passenger}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{ride.from} → {ride.to}</div>
                   </div>
                 </div>
-
-                {/* Route */}
-                <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '0.75rem', padding: '0.75rem', marginBottom: '0.85rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-                      <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#3b82f6' }} />
-                      <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.1)' }} />
-                      <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444' }} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.83rem', color: '#e2e8f0', fontWeight: 600, marginBottom: '6px' }}>{req.from}</div>
-                      <div style={{ fontSize: '0.83rem', color: '#e2e8f0', fontWeight: 600 }}>{req.to}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <Clock size={11} color="#64748b" />
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{req.requestedAt}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Accept / Decline */}
-                <div style={{ display: 'flex', gap: '0.6rem' }}>
-                  <button className="dd-decline-btn" onClick={() => handleDecline(req.id)}>
-                    <X size={14} /> Decline
-                  </button>
-                  <button className="dd-accept-btn" onClick={() => handleAccept(req)}>
-                    <Check size={14} /> Accept
-                  </button>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 800, color: '#86efac', fontSize: '1rem' }}>+₹{ride.fare}</div>
+                  <div style={{ fontSize: '0.68rem', color: '#475569' }}>{ride.date}</div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
 
-  /* ACTIVE RIDE TAB */
-  const ActiveTab = () => {
-    if (!activeRide) return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', gap: '1rem', animation: 'ddFadeIn 0.4s ease' }}>
-        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Navigation size={28} color="#10b981" />
-        </div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>No Active Ride</h3>
-        <p style={{ fontSize: '0.88rem', color: '#64748b', textAlign: 'center', maxWidth: '260px', lineHeight: 1.6 }}>Accept a ride request from the Home tab to get started.</p>
-        <button onClick={() => setActiveTab('home')} style={{ padding: '0.75rem 1.5rem', background: 'linear-gradient(135deg,#10b981,#059669)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          Go to Home <ArrowRight size={16} />
-        </button>
+        {activeTab === 'profile' && (
+          <div>
+            <div style={{ textAlign: 'center', padding: '2rem 0', background: 'linear-gradient(180deg, rgba(16,185,129,0.06), transparent)', borderRadius: '24px', marginBottom: '1.5rem', border: '1px solid rgba(16,185,129,0.1)' }}>
+              <Avatar name={driver.name} size={80} fontSize="1.8rem" />
+              <h3 style={{ color: '#f1f5f9', marginTop: '1rem', fontSize: '1.3rem', fontWeight: 800 }}>{driver.name}</h3>
+              <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '4px' }}>{driver.email}</p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '12px', padding: '6px 14px', background: 'rgba(16,185,129,0.1)', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <Star size={12} color="#fbbf24" fill="#fbbf24" />
+                <span style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 700 }}>{driver.rating}</span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '20px', padding: '1.25rem', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>Vehicle</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Car size={20} color="#86efac" /></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9' }}>{driver.vehicle} · {driver.vehicleColor}</div>
+                  <div style={{ color: '#86efac', fontFamily: "'JetBrains Mono', monospace", fontSize: '0.85rem', fontWeight: 700, marginTop: '2px' }}>{driver.vehicleNo}</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '1.5rem' }}>
+              {[{ label: 'Total Rides', value: driver.totalRides, icon: Car }, { label: 'Since', value: driver.memberSince, icon: Calendar }].map((s, i) => (
+                <div key={i} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '16px', padding: '1.25rem', textAlign: 'center', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}><s.icon size={16} color="#86efac" /></div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f1f5f9' }}>{s.value}</div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <Link to="/role-select" style={{ flex: 1, padding: '14px', borderRadius: '14px', background: 'rgba(99,102,241,0.08)', color: '#a5b4fc', textDecoration: 'none', fontWeight: 700, textAlign: 'center', border: '1px solid rgba(99,102,241,0.2)', fontSize: '0.9rem' }}>Switch to Passenger</Link>
+              <button onClick={handleLogout} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', fontFamily: 'Inter, sans-serif' }}>Logout</button>
+            </div>
+          </div>
+        )}
       </div>
     );
+  };
 
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animation: 'ddFadeIn 0.4s ease' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em' }}>Active Ride</h2>
-          <span style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem', background: 'rgba(16,185,129,0.1)', color: '#10b981', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.25)', fontWeight: 600 }}>
-            {rideCompleted ? 'Completed' : otpVerified ? 'In Progress' : 'Awaiting OTP'}
-          </span>
-        </div>
+  /* ── Bottom Sheet Content ── */
+  const renderBottomSheet = () => {
+    // Active ride
+    if (activeRide) {
+      return (
+        <>
+          <div className="sheet-handle-wrap"><div className="sheet-handle" /></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.02em' }}>Active Ride</h2>
+            <span style={{ fontSize: '0.72rem', padding: '4px 12px', borderRadius: '8px', fontWeight: 700, background: rideCompleted ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.1)', color: rideCompleted ? '#86efac' : '#fbbf24' }}>{rideCompleted ? 'Completed' : otpVerified ? 'In Progress' : 'Awaiting OTP'}</span>
+          </div>
+          <RideStatus step={rideStep} />
 
-        {/* Map */}
-        <RideMap
-          height="230px"
-          pickupCoords={activeRide?.pickupCoords}
-          dropCoords={activeRide?.dropCoords}
-          showCar={otpVerified}
-          accentColor="green"
-        />
-
-        {/* Ride status */}
-        <RideStatus step={rideStep} />
-
-        {/* Passenger info */}
-        <div style={{ background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1rem', padding: '1.1rem' }}>
-          <div style={{ fontSize: '0.7rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.75rem' }}>Passenger</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.85rem' }}>
-            <Avatar name={activeRide.passengerName} size={48} fontSize='1rem' color="blue" />
+          {/* Passenger card */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'rgba(255,255,255,0.04)', padding: '1rem', borderRadius: '16px', marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <Avatar name={activeRide.passengerName} size={52} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{activeRide.passengerName}</div>
+              <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '3px' }}>{activeRide.passengerName}</div>
               <Stars rating={activeRide.rating} />
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#10b981' }}>₹{activeRide.fare}</div>
-              <div style={{ fontSize: '0.7rem', color: '#475569' }}>Fare</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#86efac' }}>₹{activeRide.fare}</div>
+              <div style={{ fontSize: '0.68rem', color: '#64748b' }}>Fare</div>
             </div>
           </div>
+
           {/* Route */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(0,0,0,0.2)', borderRadius: '0.65rem', padding: '0.75rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b82f6' }} />
-              <div style={{ width: '1px', height: '12px', background: 'rgba(255,255,255,0.1)' }} />
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
+          <div style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '14px', padding: '12px 16px', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#94a3b8', marginBottom: '6px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+              {activeRide.from}
             </div>
-            <div>
-              <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '5px' }}>{activeRide.from}</div>
-              <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>{activeRide.to}</div>
+            <div style={{ borderLeft: '1px dashed rgba(255,255,255,0.1)', marginLeft: '3.5px', height: '12px', marginBottom: '2px' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#94a3b8' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '3px', background: '#ef4444' }} />
+              {activeRide.to}
             </div>
           </div>
-        </div>
 
-        {/* OTP Entry — verifies against Django backend */}
-        <OTPEntry
-          value={otpValue}
-          onChange={(v) => { setOtpValue(v); setOtpErrMsg(''); }}
-          onVerify={handleVerifyOTP}
-          verified={otpVerified}
-          verifying={otpVerifying}
-        />
-        {otpErrMsg && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-            borderRadius: '0.75rem', padding: '0.75rem 1rem', marginTop: '-0.25rem',
-          }}>
-            <span style={{ fontSize: '0.85rem', color: '#f87171' }}>❌ {otpErrMsg}</span>
+          <OTPEntry value={otpValue} onChange={(v) => { setOtpValue(v); setOtpErrMsg(''); }} onVerify={handleVerifyOTP} verified={otpVerified} verifying={otpVerifying} />
+          {otpErrMsg && <div style={{ marginTop: '10px', color: '#f87171', fontSize: '0.85rem', textAlign: 'center', padding: '8px', background: 'rgba(239,68,68,0.06)', borderRadius: '10px' }}>{otpErrMsg}</div>}
+          {otpVerified && !rideCompleted && (
+            <button style={{ width: '100%', padding: '14px', marginTop: '14px', borderRadius: '14px', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 6px 20px rgba(16,185,129,0.35)', fontFamily: 'Inter, sans-serif' }} onClick={handleCompleteRide}>
+              <Check size={18} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '6px' }} /> Mark Ride Complete
+            </button>
+          )}
+        </>
+      );
+    }
+
+    // Offline — offer ride
+    if (!online) {
+      return (
+        <>
+          <div className="sheet-handle-wrap"><div className="sheet-handle" /></div>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500, marginBottom: '4px' }}>Hello, {driver.name.split(' ')[0]} 👋</div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.03em' }}>Offer a Ride</h2>
           </div>
-        )}
-
-        {/* Complete ride button — only shows after OTP verified */}
-        {otpVerified && !rideCompleted && (
-          <button className="dd-complete-btn" onClick={handleCompleteRide}>
-            <CheckCircle size={18} /> Mark Ride as Complete
-          </button>
-        )}
-
-        {rideCompleted && (
-          <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '1rem', padding: '1.1rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎉</div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#34d399', fontFamily: "'Space Grotesk',sans-serif" }}>Ride Completed!</div>
-            <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.25rem' }}>Redirecting to earnings...</div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  /* EARNINGS TAB */
-  const EarningsTab = () => (
-    <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '0.3rem' }}>Earnings</h2>
-      <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '1.5rem' }}>Your ride income summary.</p>
-
-      {/* Big earnings cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
-        {[
-          { label: "Today's Earnings", value: `₹${todayEarnings}`, sub: `${MOCK_EARNINGS.filter(e => e.date.startsWith('Today')).length} rides`, icon: IndianRupee, color: 'green' },
-          { label: 'This Week', value: `₹${weekEarnings}`, sub: `${MOCK_EARNINGS.length} rides`, icon: TrendingUp, color: 'blue' },
-        ].map((card, i) => (
-          <div key={i} className="earning-card" style={{
-            background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)',
-            border: `1px solid ${i === 0 ? 'rgba(16,185,129,0.12)' : 'rgba(59,130,246,0.12)'}`,
-            borderRadius: '1.1rem', padding: '1.25rem', position: 'relative', overflow: 'hidden',
-          }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: i === 0 ? 'linear-gradient(90deg,#10b981,#34d399)' : 'linear-gradient(90deg,#3b82f6,#60a5fa)' }} />
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: i === 0 ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
-              <card.icon size={18} color={i === 0 ? '#10b981' : '#3b82f6'} />
-            </div>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', animation: 'countUp 0.5s ease' }}>{card.value}</div>
-            <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.15rem' }}>{card.label}</div>
-            <div style={{ fontSize: '0.72rem', color: i === 0 ? '#10b981' : '#3b82f6', marginTop: '0.25rem', fontWeight: 600 }}>{card.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent rides */}
-      <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.75rem' }}>Recent Rides</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-        {MOCK_EARNINGS.map(ride => (
-          <div key={ride.id} className="dd-history-row" style={{
-            background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.85rem',
-          }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.85rem', fontWeight: 700, color: 'white' }}>
-              {ride.passenger.split(' ').map(n => n[0]).join('').slice(0, 2)}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.2rem' }}>{ride.passenger}</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b' }}>
-                <span>{ride.from}</span>
-                <ArrowRight size={10} />
-                <span>{ride.to}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+            <input className="dd-form-input" placeholder="Leaving from" value={postPickup} onChange={e => setPostPickup(e.target.value)} />
+            <input className="dd-form-input" placeholder="Going to" value={postDestination} onChange={e => setPostDestination(e.target.value)} />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b', fontSize: '0.85rem' }}>₹</span>
+                <input className="dd-form-input" style={{ paddingLeft: '30px' }} type="number" placeholder="Fare" value={postFare} onChange={e => setPostFare(e.target.value)} />
+              </div>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b', fontSize: '0.85rem' }}>👤</span>
+                <input className="dd-form-input" style={{ paddingLeft: '34px' }} type="number" placeholder="Seats" value={postSeats} onChange={e => setPostSeats(e.target.value)} />
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#10b981' }}>+₹{ride.fare}</div>
-              <div style={{ fontSize: '0.7rem', color: '#475569', marginTop: '0.1rem' }}>{ride.date}</div>
+          </div>
+          <button onClick={handlePostRide} disabled={postingRide} style={{
+            width: '100%', padding: '14px', border: 'none', borderRadius: '16px',
+            background: 'linear-gradient(135deg, #10b981, #059669, #047857)',
+            backgroundSize: '200% 200%', animation: 'gradientShift 4s ease infinite',
+            color: 'white', fontWeight: 700, fontSize: '1rem', cursor: postingRide ? 'not-allowed' : 'pointer',
+            boxShadow: '0 8px 32px rgba(16,185,129,0.35)', transition: 'all 0.3s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            fontFamily: 'Inter, sans-serif',
+          }}>
+            {postingRide ? 'Posting...' : <><Zap size={18} /> Go Online & Offer Ride</>}
+          </button>
+        </>
+      );
+    }
+
+    // Online — waiting for requests
+    if (online && requests.length === 0) {
+      return (
+        <>
+          <div className="sheet-handle-wrap"><div className="sheet-handle" /></div>
+          <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+            <div style={{ position: 'relative', width: '70px', height: '70px', margin: '0 auto 1.5rem' }}>
+              <div className="radar-ring" style={{ width: '70px', height: '70px', top: 0, left: 0 }} />
+              <div className="radar-ring" style={{ width: '70px', height: '70px', top: 0, left: 0 }} />
+              <div className="radar-ring" style={{ width: '70px', height: '70px', top: 0, left: 0 }} />
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Car size={22} color="#86efac" />
+                </div>
+              </div>
             </div>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f1f5f9', marginBottom: '8px' }}>Looking for Riders</h2>
+            <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: 1.6 }}>You're online. We'll notify you<br/>when someone requests a ride.</p>
           </div>
-        ))}
-      </div>
-    </div>
-  );
+        </>
+      );
+    }
 
-  /* PROFILE TAB */
-  const ProfileTab = () => (
-    <div style={{ animation: 'ddFadeIn 0.4s ease' }}>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", letterSpacing: '-0.03em', marginBottom: '1.5rem' }}>Profile</h2>
-
-      {/* Profile card */}
-      <div style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '1rem', textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-          <Avatar name={driver.name} size={72} fontSize='1.4rem' color="green" />
-        </div>
-        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif", marginBottom: '0.3rem' }}>{driver.name}</h3>
-        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.75rem' }}>{driver.email}</p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.85rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '999px' }}>
-            <Shield size={11} color="#34d399" />
-            <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>Verified Driver</span>
+    // Online — ride requests
+    if (online && requests.length > 0) {
+      return (
+        <>
+          <div className="sheet-handle-wrap"><div className="sheet-handle" /></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f1f5f9' }}>Ride Requests</h2>
+            <span style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', color: 'white', padding: '4px 12px', borderRadius: '10px', fontSize: '0.78rem', fontWeight: 800 }}>{requests.length} New</span>
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.85rem', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '999px' }}>
-            <Star size={11} fill="#f59e0b" color="#f59e0b" />
-            <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 600 }}>{driver.rating} Rating</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {requests.map((req, i) => (
+              <div key={req.id} className="dd-request-card" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <Avatar name={req.passengerName} size={44} />
+                    <div>
+                      <div style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '0.95rem' }}>{req.passengerName}</div>
+                      <Stars rating={req.rating} />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#86efac' }}>₹{req.fare}</div>
+                  </div>
+                </div>
+                <div style={{ background: 'rgba(0,0,0,0.15)', padding: '10px 14px', borderRadius: '12px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#94a3b8', marginBottom: '6px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> {req.from}
+                  </div>
+                  <div style={{ borderLeft: '1px dashed rgba(255,255,255,0.1)', marginLeft: '3.5px', height: '8px', marginBottom: '2px' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#94a3b8' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '3px', background: '#ef4444' }} /> {req.to}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="dd-btn-decline" onClick={() => handleDecline(req.id)}><X size={14} /> Decline</button>
+                  <button className="dd-btn-accept" onClick={() => handleAccept(req)}><Check size={14} /> Accept</button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
-
-      {/* Vehicle card */}
-      <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(16,185,129,0.1)', borderRadius: '1.1rem', padding: '1.25rem', marginBottom: '1rem' }}>
-        <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.85rem' }}>Vehicle Details</div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Car size={22} color="#34d399" />
-            </div>
-            <div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{driver.vehicle}</div>
-              <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{driver.vehicleColor}</div>
-            </div>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', padding: '0.4rem 0.85rem', fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '0.08em', fontFamily: 'monospace' }}>
-            {driver.vehicleNo}
-          </div>
-        </div>
-      </div>
-
-      {/* UPI ID setting */}
-      <div style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(139,92,246,0.12)', borderRadius: '1.1rem', padding: '1.25rem', marginBottom: '1rem' }}>
-        <div style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.85rem' }}>Payment Setup</div>
-        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-          <input
-            type="text"
-            placeholder="Enter your UPI ID (e.g. name@upi)"
-            value={upiId}
-            onChange={e => setUpiId(e.target.value)}
-            style={{ flex: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '0.75rem', padding: '0.75rem', color: '#f8fafc', outline: 'none', fontFamily: 'monospace', fontSize: '0.9rem' }}
-          />
-          <button onClick={handleSaveUpi} style={{ padding: '0.75rem 1.25rem', background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', color: 'white', border: 'none', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem', fontFamily: 'inherit', transition: 'all 0.2s' }}>Save</button>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-        {[
-          { label: 'Total Rides', value: driver.totalRides, icon: Car },
-          { label: 'Member Since', value: driver.memberSince, icon: Calendar },
-        ].map((stat, i) => (
-          <div key={i} style={{ background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1rem', padding: '1rem', textAlign: 'center' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem' }}>
-              <stat.icon size={17} color="#10b981" />
-            </div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', fontFamily: "'Space Grotesk',sans-serif" }}>{stat.value}</div>
-            <div style={{ fontSize: '0.75rem', color: '#475569' }}>{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Switch to passenger */}
-      <Link to="/role-select" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1rem', padding: '1rem 1.25rem', textDecoration: 'none', transition: 'all 0.2s' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(59,130,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <User size={17} color="#3b82f6" />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#e2e8f0' }}>Switch to Passenger Mode</div>
-            <div style={{ fontSize: '0.75rem', color: '#475569' }}>Book rides instead</div>
-          </div>
-        </div>
-        <ChevronRight size={16} color="#475569" />
-      </Link>
-    </div>
-  );
-
-  /* ══════════════════════════════
-     RENDER
-  ══════════════════════════════ */
-  const tabContent = {
-    home: HomeTab(),
-    active: ActiveTab(),
-    earnings: EarningsTab(),
-    profile: ProfileTab(),
+        </>
+      );
+    }
   };
 
   return (
-    <div className="dd-root" style={{ minHeight: '100vh', background: '#06060f' }}>
-      {Sidebar()}
-      {MobileNav()}
-      <div className="dd-main" style={{ marginLeft: '240px', minHeight: '100vh', padding: '2rem' }}>
-        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-          {tabContent[activeTab]}
-        </div>
+    <div className="dd-root">
+      {/* Full-screen map */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <RideMap height="100vh" pickupCoords={activeRide?.pickupCoords} dropCoords={activeRide?.dropCoords} showCar={otpVerified} accentColor="green" />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,14,26,0.75) 0%, rgba(10,14,26,0.1) 35%, rgba(10,14,26,0.6) 75%, rgba(10,14,26,0.95) 100%)', pointerEvents: 'none' }} />
       </div>
 
+      {/* Header */}
+      <div className="dd-float-header">
+        <div style={{ position: 'relative' }}>
+          <button className="glass-circle" onClick={() => setShowMenu(!showMenu)}><Menu size={20} /></button>
+          {showMenu && (
+            <div className="dd-menu">
+              {[
+                { id: 'home', icon: Home, label: 'Dashboard' },
+                { id: 'earnings', icon: Wallet, label: 'Earnings' },
+                { id: 'profile', icon: User, label: 'Profile' },
+              ].map(item => (
+                <button key={item.id} className="dd-menu-item" onClick={() => { setActiveTab(item.id); setShowMenu(false); }}><item.icon size={16} /> {item.label}</button>
+              ))}
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '6px 0' }} />
+              <button className="dd-menu-item" style={{ color: '#f87171' }} onClick={handleLogout}><LogOut size={16} /> Log Out</button>
+            </div>
+          )}
+        </div>
+
+        {!activeRide && (
+          <div className={`dd-online-toggle ${online ? 'online' : 'offline'}`} onClick={() => setOnline(!online)}>
+            <div style={{ position: 'relative' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: online ? '#22c55e' : '#64748b', transition: 'background 0.3s' }} />
+              {online && <div style={{ position: 'absolute', inset: '-2px', borderRadius: '50%', background: '#22c55e', animation: 'livePulse 2s infinite' }} />}
+            </div>
+            <span style={{ color: online ? '#86efac' : '#94a3b8', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', transition: 'color 0.3s' }}>
+              {online ? 'ONLINE' : 'OFFLINE'}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Sheet */}
+      {activeTab === 'home' && <div className="dd-bottom-sheet">{renderBottomSheet()}</div>}
+
+      {/* Overlays */}
+      {renderOverlay()}
+
       {/* Payment Modal */}
-      {showPayment && (
-        <PaymentModal
-          fare={completedRideData?.fare || activeRide?.fare || 0}
-          driverName={driver.name}
-          driverUpi={upiId}
-          role="driver"
-          onPaid={handlePaymentConfirmed}
-          onClose={() => setShowPayment(false)}
-        />
-      )}
-
-
+      {showPayment && <PaymentModal fare={completedRideData?.fare || activeRide?.fare || 0} driverName={driver.name} driverUpi={upiId} role="driver" onPaid={handlePaymentConfirmed} onClose={() => setShowPayment(false)} />}
     </div>
   );
 };

@@ -65,7 +65,7 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
         {done ? (
           <div style={{ textAlign: 'center', padding: '1rem 0' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎉</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Space Grotesk', sans-serif" }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Outfit', sans-serif" }}>
               Thank you!
             </div>
             <div style={{ fontSize: '0.85rem', color: '#706d8a', marginTop: '0.3rem' }}>
@@ -76,7 +76,7 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
           <>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⭐</div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.3rem' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Outfit', sans-serif", marginBottom: '0.3rem' }}>
                 Rate your ride
               </h3>
               <p style={{ fontSize: '0.88rem', color: '#706d8a' }}>
@@ -96,8 +96,8 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
                 >
                   <Star
                     size={36}
-                    fill={i <= (hovered || rating) ? '#f59e0b' : 'transparent'}
-                    color={i <= (hovered || rating) ? '#f59e0b' : '#334155'}
+                    fill={i <= (hovered || rating) ? '#ffb86c' : 'transparent'}
+                    color={i <= (hovered || rating) ? '#ffb86c' : '#334155'}
                     strokeWidth={1.5}
                   />
                 </div>
@@ -106,7 +106,7 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
 
             {/* Rating label */}
             {rating > 0 && (
-              <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '0.85rem', color: '#f59e0b', fontWeight: 600 }}>
+              <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '0.85rem', color: '#ffb86c', fontWeight: 600 }}>
                 {['', 'Poor', 'Below Average', 'Good', 'Very Good', 'Excellent'][rating]}
               </div>
             )}
@@ -133,7 +133,7 @@ const RatingModal = ({ rideId, fromUid, toUid, toName, onClose }) => {
               style={{
                 width: '100%', padding: '0.85rem', borderRadius: '0.75rem', border: 'none',
                 cursor: rating === 0 || submitting ? 'not-allowed' : 'pointer',
-                background: rating > 0 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255,255,255,0.05)',
+                background: rating > 0 ? 'linear-gradient(135deg, #ffb86c, #ffb86c)' : 'rgba(255,255,255,0.05)',
                 color: rating > 0 ? 'white' : '#334155',
                 fontSize: '0.95rem', fontWeight: 700, fontFamily: 'inherit',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',

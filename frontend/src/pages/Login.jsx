@@ -149,12 +149,12 @@ const Login = () => {
 
         {/* Brand */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', marginBottom: '2rem' }}>
-          <div style={{ width: '34px', height: '34px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(99,102,241,0.4)', flexShrink: 0 }}>
+          <div style={{ width: '34px', height: '34px', background: 'linear-gradient(135deg, #64ffda, #007bb5)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(99,102,241,0.4)', flexShrink: 0 }}>
             <Car size={18} />
           </div>
           <span style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f1f0ff', letterSpacing: '-0.04em', fontFamily: 'var(--font-heading)' }}>
             RideShare
-            <span style={{ background: 'linear-gradient(135deg, #818cf8, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
+            <span style={{ background: 'linear-gradient(135deg, #a6fff0, #64ffda)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Campus</span>
           </span>
         </Link>
 
@@ -176,7 +176,7 @@ const Login = () => {
               cursor: 'pointer', fontSize: '0.88rem', fontWeight: 600,
               transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1)', fontFamily: 'var(--font-heading)',
               background: tab === t ? 'rgba(99,102,241,0.15)' : 'transparent',
-              color: tab === t ? '#818cf8' : '#706d8a',
+              color: tab === t ? '#a6fff0' : '#706d8a',
               boxShadow: tab === t ? 'inset 0 0 0 1px rgba(99,102,241,0.3)' : 'none',
             }}>
               {t === 'login' ? 'Login' : 'Sign Up'}
@@ -237,7 +237,7 @@ const Login = () => {
           {/* Forgot password */}
           {tab === 'login' && (
             <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.4rem' }}>
-              <a href="#" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none' }}>Forgot password?</a>
+              <a href="#" style={{ fontSize: '0.8rem', color: '#a6fff0', textDecoration: 'none' }}>Forgot password?</a>
             </div>
           )}
 
@@ -246,7 +246,7 @@ const Login = () => {
             width: '100%', padding: '0.85rem', borderRadius: '0.75rem', border: 'none',
             cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.95rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-            transition: 'all 0.2s', background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            transition: 'all 0.2s', background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
             color: 'white', boxShadow: '0 4px 20px rgba(99,102,241,0.4)',
             letterSpacing: '-0.01em', marginTop: '0.5rem', fontFamily: 'var(--font-heading)',
             opacity: loading ? 0.7 : 1,
@@ -278,7 +278,7 @@ const Login = () => {
         {/* Switch tab */}
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#706d8a' }}>
           {tab === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <a href="#" style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}
+          <a href="#" style={{ color: '#a6fff0', textDecoration: 'none', fontWeight: 600 }}
             onClick={(e) => { e.preventDefault(); setTab(tab === 'login' ? 'signup' : 'login'); }}>
             {tab === 'login' ? 'Sign Up' : 'Login'}
           </a>

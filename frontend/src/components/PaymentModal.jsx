@@ -72,14 +72,14 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
             <div style={{
               width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 1rem',
-              background: 'linear-gradient(135deg, #10b981, #059669)',
+              background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 8px 24px rgba(16,185,129,0.4)',
               animation: 'checkPop 0.5s cubic-bezier(0.16,1,0.3,1)',
             }}>
               <CheckCircle size={36} color="white" />
             </div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.4rem' }}>
+            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#4ade80', fontFamily: "'Outfit', sans-serif", marginBottom: '0.4rem' }}>
               Payment Confirmed!
             </div>
             <div style={{ fontSize: '0.88rem', color: '#706d8a' }}>
@@ -99,7 +99,7 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
               }}>
                 <IndianRupee size={26} color="#a78bfa" />
               </div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Space Grotesk', sans-serif", marginBottom: '0.3rem' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', fontFamily: "'Outfit', sans-serif", marginBottom: '0.3rem' }}>
                 Ride Payment
               </h3>
               <p style={{ fontSize: '0.88rem', color: '#706d8a' }}>
@@ -115,7 +115,7 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.3rem' }}>
                 Amount Due
               </div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#22c55e', fontFamily: "'Space Grotesk', sans-serif", letterSpacing: '-0.03em' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#22c55e', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.03em' }}>
                 ₹{fare}
               </div>
               <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '0.15rem' }}>
@@ -177,8 +177,8 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
                 borderRadius: '0.75rem', padding: '0.85rem 1rem', marginBottom: '1.25rem',
                 display: 'flex', alignItems: 'center', gap: '0.6rem',
               }}>
-                <QrCode size={18} color="#f59e0b" />
-                <span style={{ fontSize: '0.82rem', color: '#f59e0b' }}>Driver hasn't set up UPI. Please pay in cash.</span>
+                <QrCode size={18} color="#ffb86c" />
+                <span style={{ fontSize: '0.82rem', color: '#ffb86c' }}>Driver hasn't set up UPI. Please pay in cash.</span>
               </div>
             )}
 
@@ -188,7 +188,7 @@ const PaymentModal = ({ fare = 0, driverName = 'Driver', driverUpi = '', role = 
               disabled={confirming}
               style={{
                 width: '100%', padding: '0.9rem', borderRadius: '0.75rem', border: 'none',
-                background: 'linear-gradient(135deg, #10b981, #059669)',
+                background: 'linear-gradient(135deg, #64ffda, #52e0c4)',
                 color: 'white', fontSize: '0.95rem', fontWeight: 700, fontFamily: 'inherit',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                 cursor: confirming ? 'not-allowed' : 'pointer',

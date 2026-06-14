@@ -93,7 +93,7 @@ const injectStyles = () => {
     .continue-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .shimmer-text {
-      background: linear-gradient(90deg, #818cf8, #a78bfa, #fbbf24, #818cf8);
+      background: linear-gradient(90deg, #a6fff0, #33a8e5, #ffb86c, #a6fff0);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -121,7 +121,7 @@ const Pill = ({ icon: Icon, text, color }) => (
     padding: '0.3rem 0.7rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 500,
     background: color === 'indigo' ? 'rgba(99,102,241,0.1)' : 'rgba(245,158,11,0.1)',
     border: `1px solid ${color === 'indigo' ? 'rgba(99,102,241,0.2)' : 'rgba(245,158,11,0.2)'}`,
-    color: color === 'indigo' ? '#818cf8' : '#fbbf24',
+    color: color === 'indigo' ? '#a6fff0' : '#ffb86c',
     fontFamily: 'var(--font-heading)',
   }}>
     <Icon size={11} />
@@ -209,11 +209,11 @@ const RoleSelect = () => {
               }}
             >
               {/* Top accent line */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #6366f1, #818cf8)', opacity: selected === 'passenger' ? 1 : 0.25, transition: 'opacity 0.3s' }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #64ffda, #a6fff0)', opacity: selected === 'passenger' ? 1 : 0.25, transition: 'opacity 0.3s' }} />
 
               {/* Selected indicator */}
               {selected === 'passenger' && (
-                <div style={{ position: 'absolute', top: '1rem', right: '1rem', width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(99,102,241,0.5)' }}>
+                <div style={{ position: 'absolute', top: '1rem', right: '1rem', width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #64ffda, #52e0c4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(99,102,241,0.5)' }}>
                   <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -221,8 +221,8 @@ const RoleSelect = () => {
               )}
 
               {/* Icon */}
-              <div className="icon-passenger" style={{ width: '64px', height: '64px', borderRadius: '18px', background: selected === 'passenger' ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'rgba(99,102,241,0.08)', border: `1px solid ${selected === 'passenger' ? 'transparent' : 'rgba(99,102,241,0.15)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: selected === 'passenger' ? '0 8px 24px rgba(99,102,241,0.4)' : 'none', transition: 'all 0.3s' }}>
-                <User size={28} color={selected === 'passenger' ? 'white' : '#818cf8'} />
+              <div className="icon-passenger" style={{ width: '64px', height: '64px', borderRadius: '18px', background: selected === 'passenger' ? 'linear-gradient(135deg, #64ffda, #52e0c4)' : 'rgba(99,102,241,0.08)', border: `1px solid ${selected === 'passenger' ? 'transparent' : 'rgba(99,102,241,0.15)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: selected === 'passenger' ? '0 8px 24px rgba(99,102,241,0.4)' : 'none', transition: 'all 0.3s' }}>
+                <User size={28} color={selected === 'passenger' ? 'white' : '#a6fff0'} />
               </div>
 
               <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', marginBottom: '0.5rem', fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
@@ -244,7 +244,7 @@ const RoleSelect = () => {
                 <div style={{ fontSize: '0.7rem', color: '#45425e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.6rem', fontFamily: 'var(--font-heading)' }}>You'll see</div>
                 {['Available drivers near you', 'Pickup & drop location map', 'Fare estimate before booking'].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: i < 2 ? '0.4rem' : 0 }}>
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#6366f1', flexShrink: 0 }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#64ffda', flexShrink: 0 }} />
                     <span style={{ fontSize: '0.82rem', color: '#b8b5d0' }}>{item}</span>
                   </div>
                 ))}
@@ -264,11 +264,11 @@ const RoleSelect = () => {
               }}
             >
               {/* Top accent line */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', opacity: selected === 'driver' ? 1 : 0.25, transition: 'opacity 0.3s' }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #ffb86c, #ffb86c)', opacity: selected === 'driver' ? 1 : 0.25, transition: 'opacity 0.3s' }} />
 
               {/* Selected indicator */}
               {selected === 'driver' && (
-                <div style={{ position: 'absolute', top: '1rem', right: '1rem', width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(245,158,11,0.5)' }}>
+                <div style={{ position: 'absolute', top: '1rem', right: '1rem', width: '24px', height: '24px', borderRadius: '50%', background: 'linear-gradient(135deg, #ffb86c, #ffb86c)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(245,158,11,0.5)' }}>
                   <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -276,8 +276,8 @@ const RoleSelect = () => {
               )}
 
               {/* Icon */}
-              <div className="icon-driver" style={{ width: '64px', height: '64px', borderRadius: '18px', background: selected === 'driver' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(245,158,11,0.08)', border: `1px solid ${selected === 'driver' ? 'transparent' : 'rgba(245,158,11,0.15)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: selected === 'driver' ? '0 8px 24px rgba(245,158,11,0.4)' : 'none', transition: 'all 0.3s' }}>
-                <Car size={28} color={selected === 'driver' ? 'white' : '#fbbf24'} />
+              <div className="icon-driver" style={{ width: '64px', height: '64px', borderRadius: '18px', background: selected === 'driver' ? 'linear-gradient(135deg, #ffb86c, #ffb86c)' : 'rgba(245,158,11,0.08)', border: `1px solid ${selected === 'driver' ? 'transparent' : 'rgba(245,158,11,0.15)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: selected === 'driver' ? '0 8px 24px rgba(245,158,11,0.4)' : 'none', transition: 'all 0.3s' }}>
+                <Car size={28} color={selected === 'driver' ? 'white' : '#ffb86c'} />
               </div>
 
               <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f0ff', marginBottom: '0.5rem', fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
@@ -299,7 +299,7 @@ const RoleSelect = () => {
                 <div style={{ fontSize: '0.7rem', color: '#45425e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.6rem', fontFamily: 'var(--font-heading)' }}>You'll see</div>
                 {['Incoming ride requests', 'Passenger pickup location', 'OTP entry to start the ride'].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: i < 2 ? '0.4rem' : 0 }}>
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#f59e0b', flexShrink: 0 }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffb86c', flexShrink: 0 }} />
                     <span style={{ fontSize: '0.82rem', color: '#b8b5d0' }}>{item}</span>
                   </div>
                 ))}
@@ -324,8 +324,8 @@ const RoleSelect = () => {
               background: !selected
                 ? 'rgba(255,255,255,0.05)'
                 : selected === 'passenger'
-                  ? 'linear-gradient(135deg, #6366f1, #4f46e5)'
-                  : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  ? 'linear-gradient(135deg, #64ffda, #52e0c4)'
+                  : 'linear-gradient(135deg, #ffb86c, #ffb86c)',
               color: !selected ? '#45425e' : selected === 'driver' ? '#0c0c1d' : 'white',
               boxShadow: !selected ? 'none'
                 : selected === 'passenger'
